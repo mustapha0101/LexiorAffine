@@ -94,20 +94,20 @@ export function AiSlashMenuConfigExtension() {
     ).map<SlashMenuActionItem>(item => ({
       ...actionItemWrapper(item),
       name: `${item.name} from above`,
-      group: `1_AFFiNE AI@${index++}`,
+      group: `1_LexiorGPT@${index++}`,
     })),
 
     ...AIItems.filter(({ name }) =>
       ['Summarize', 'Continue writing'].includes(name)
     ).map<SlashMenuActionItem>(item => ({
       ...actionItemWrapper(item),
-      group: `1_AFFiNE AI@${index++}`,
+      group: `1_LexiorGPT@${index++}`,
     })),
 
     {
       name: 'Action with above',
       icon: iconWrapper(MoreHorizontalIcon({ width: '24px', height: '24px' })),
-      group: `1_AFFiNE AI@${index++}`,
+      group: `1_LexiorGPT@${index++}`,
       subMenu: [
         ...AIItems.filter(({ name }) =>
           ['Translate to', 'Change tone to'].includes(name)

@@ -20,6 +20,7 @@ import { buildDocDisplayMetaExtension } from './display-meta';
 import { patchDocModeService } from './doc-mode-service';
 import { patchDocUrlExtensions } from './doc-url';
 import { patchFileSizeLimitExtension } from './file-size-limit';
+import { patchIracService } from './irac-service';
 import { patchNotificationService } from './notification-service';
 import { patchOpenDocExtension } from './open-doc';
 import { patchQuickSearchService } from './quick-search-service';
@@ -106,6 +107,7 @@ export class AffineEditorViewExtension extends ViewExtensionProvider<AffineEdito
         patchOpenDocExtension(),
         patchSideBarService(framework),
         patchFileSizeLimitExtension(framework),
+        patchIracService(framework),
         buildDocDisplayMetaExtension(framework),
         patchForAudioEmbedView(reactToLit),
       ])

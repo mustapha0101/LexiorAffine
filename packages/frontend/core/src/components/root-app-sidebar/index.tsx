@@ -69,6 +69,33 @@ export type RootAppSidebarProps = {
   };
 };
 
+
+const CabinetButton = () => {
+  const { workbenchService } = useServices({ WorkbenchService });
+  const workbench = workbenchService.workbench;
+  const cabinetActive = useLiveData(
+    workbench.location$.selector(location => location.pathname === '/cabinet')
+  );
+
+  return (
+    <MenuLinkItem icon={<AllDocsIcon />} active={cabinetActive} to={'/cabinet'}>
+      <span data-testid="cabinet">
+        Dossier Client
+      </span>
+    </MenuLinkItem>
+  );
+};
+
+const RetourCabinetButton = () => {
+  return (
+    <MenuItem icon={<AllDocsIcon />} onClick={() => { window.location.href = '/' }}>
+      <span data-testid="retour-cabinet">
+        Retour au Cabinet
+      </span>
+    </MenuItem>
+  );
+};
+
 const AllDocsButton = () => {
   const t = useI18n();
   const { workbenchService } = useServices({
@@ -211,6 +238,8 @@ export const RootAppSidebar = memo((): ReactElement => {
           />
           <AddPageButton />
         </div>
+        <RetourCabinetButton />
+        <CabinetButton />
         <AllDocsButton />
         <AppSidebarJournalButton />
         {sessionStatus === 'authenticated' && <NotificationButton />}

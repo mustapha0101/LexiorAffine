@@ -86,7 +86,7 @@ export function setupAIProvider(
     const { input, contexts } = options;
 
     const sessionId = await createSession({
-      promptName: 'Chat With AFFiNE AI',
+      promptName: 'Chat With LexiorGPT',
       ...options,
     });
     return textToText({

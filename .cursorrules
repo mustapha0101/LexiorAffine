@@ -1,0 +1,31 @@
+# AI Developer Assistant Guidelines for LexiorAffine
+
+You are an AI Developer Assistant working on the **LexiorAffine** repository (a fork/extension of AFFiNE for legal use cases). Adhere to these strict guidelines when writing or modifying code.
+
+## 1. Tech Stack & Environment
+- **Node.js**: `v20.x` (LTS)
+- **Package Manager**: `yarn 4.x`
+- **Native Modules**: Rust (`NAPI.rs`). Use `yarn affine @affine/native build` and `yarn affine @affine/server-native build` for building native Rust code.
+- **Frontend**: React, BlockSuite, Lit (for certain legacy or specific Web Components).
+- **Backend**: NestJS, Prisma, PostgreSQL (pgvector/pgvector:pg16), Redis.
+
+## 2. Command Line Operations
+- Use `yarn dev` to run both frontend and backend in development.
+- Server is located under `@affine/server`. Server CLI commands use `yarn affine server <command>`.
+- **Testing**: We use `vitest` for Unit Tests (`yarn test`) and `Playwright` for E2E Tests (`yarn workspace @affine-test/affine-local e2e`).
+
+## 3. Architecture & Backend Rules
+- **Dependency Injection**: The backend strictly uses NestJS. Always ensure newly injected services (like `WorkspaceBlobStorage`) are exported by their host modules (e.g., `StorageModule`) and imported correctly in the consumer module (e.g., `CopilotModule`).
+- **AI Models (Copilot)**:
+  - Do NOT pass internal URL endpoints (`/api/workspaces/...`) directly to the LLM Provider if it causes HTTP loopback `403 Forbidden` errors.
+  - Instead, read the Blob data natively using `WorkspaceBlobStorage` or `CopilotStorage`, convert to Base64 buffer, and pass it as a `PromptAttachment` with `kind: 'bytes'`.
+- **Database**: Prisma handles ORM. Run `yarn affine server init` if migrations change.
+
+## 4. Coding Conventions
+- **Imports**: Avoid modifying unrelated `import` groups.
+- **Comments**: Never remove existing comments or docstrings unless explicitly instructed.
+- **Error Handling**: Use `Logger` from `@nestjs/common` to log exceptions gracefully in background jobs.
+
+## 5. Development Mode
+- In dev mode, a `dev@affine.pro` user is automatically provisioned for testing.
+- Local Database GUI is available via `yarn affine server prisma studio` (port 5555).

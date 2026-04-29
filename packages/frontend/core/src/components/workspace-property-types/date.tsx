@@ -41,12 +41,74 @@ const useParsedDate = (value: string) => {
   };
 };
 
+import { DocService } from '@affine/core/modules/doc';
+import { toast, IconButton } from '@affine/component';
+import { AiIcon } from '@blocksuite/icons/rc';
+import { useAppSettingHelper } from '../hooks/affine/use-app-setting-helper';
+import { useServiceOptional } from '@toeverything/infra';
+
 export const DateValue = ({
+  propertyInfo,
   value,
   onChange,
   readonly,
-}: PropertyValueProps) => {
+}: PropertyValueProps & { propertyInfo?: any }) => {
   const { parsedValue, displayValue } = useParsedDate(value);
+  const { appSettings } = useAppSettingHelper();
+  const docService = useServiceOptional(DocService);
+  const [isExtracting, setIsExtracting] = useState(false);
+
+  const extractDate = useCallback(async () => {
+    if (isExtracting) return;
+    const page = docService?.doc.blockSuiteDoc;
+    if (!page) return;
+
+    setIsExtracting(true);
+    toast("Recherche de la date d'audience par l'IA...", { duration: 3000 });
+
+    try {
+      const blocks = Object.values(page.blocks.value);
+      const textContent = blocks.map((b: any) => b.text?.toString() || b.model?.text?.toString() || '').join('\n').trim();
+
+      if (!textContent) {
+        toast("Document vide, aucune date trouvée.");
+        setIsExtracting(false);
+        return;
+      }
+
+      const prompt = `Voici le texte d'un document juridique. Cherche la date de l'audience ou de la comparution mentionnée. Si tu la trouves, retourne-la UNIQUEMENT sous le format AAAA-MM-JJ. Si aucune date d'audience n'est présente, ne retourne rien. Texte: ${textContent.substring(0, 4000)}`;
+
+      const response = await fetch('http://localhost:11434/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'LexiorGPT-mini-128k-ccq:latest',
+          prompt: prompt,
+          stream: false
+        })
+      });
+      const data = await response.json();
+      let extractedDate = data.response?.trim() || '';
+
+      if (extractedDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        onChange(extractedDate);
+        toast(`✓ Date extraite par l'IA : ${extractedDate}`);
+      } else {
+        toast("Aucune date d'audience trouvée.");
+      }
+    } catch (e) {
+      console.error(e);
+      toast("Erreur lors de l'extraction par l'IA.");
+    } finally {
+      setIsExtracting(false);
+    }
+  }, [docService, isExtracting, onChange]);
+
+  useEffect(() => {
+    if (propertyInfo?.id === 'custom:date_audience' && !value && (appSettings as any).autoExtractAudienceDate && !readonly) {
+      extractDate();
+    }
+  }, [propertyInfo?.id, value, (appSettings as any).autoExtractAudienceDate, readonly, extractDate]);
 
   if (readonly) {
     return (
@@ -60,20 +122,39 @@ export const DateValue = ({
     );
   }
 
+  const isAudienceDate = propertyInfo?.id === 'custom:date_audience';
+
   return (
-    <Menu
-      contentOptions={{
-        style: BUILD_CONFIG.isMobileEdition ? { padding: '15px 20px' } : {},
-      }}
-      items={<DatePicker value={parsedValue} onChange={onChange} />}
-    >
-      <PropertyValue
-        className={parsedValue ? '' : styles.empty}
-        isEmpty={!parsedValue}
+    <div style={{ display: 'flex', alignItems: 'center', width: '100%', gap: 4 }}>
+      <Menu
+        contentOptions={{
+          style: BUILD_CONFIG.isMobileEdition ? { padding: '15px 20px' } : {},
+        }}
+        items={<DatePicker value={parsedValue} onChange={onChange} />}
       >
-        {displayValue}
-      </PropertyValue>
-    </Menu>
+        <PropertyValue
+          className={parsedValue ? '' : styles.empty}
+          isEmpty={!parsedValue}
+        >
+          {displayValue}
+        </PropertyValue>
+      </Menu>
+      
+      {isAudienceDate && (
+        <IconButton 
+          size={20} 
+          onClick={extractDate} 
+          disabled={isExtracting}
+          style={{ 
+            color: isExtracting ? 'var(--affine-text-disable-color)' : '#8b5cf6',
+            opacity: isExtracting ? 0.5 : 1
+          }}
+          tooltip="Extraire la date d'audience via l'IA"
+        >
+          <AiIcon />
+        </IconButton>
+      )}
+    </div>
   );
 };
 

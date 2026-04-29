@@ -10,6 +10,7 @@ import { DocService } from '../modules/doc';
 import { EditorService } from '../modules/editor';
 import { EditorSettingService } from '../modules/editor-setting';
 import * as styles from './page-detail-editor.css';
+import { useLegalClassificationInterceptor } from './hooks/affine/use-legal-classification';
 
 declare global {
   // oxlint-disable-next-line no-var
@@ -57,6 +58,8 @@ export const PageDetailEditor = ({
   useEffect(() => {
     editor.doc.blockSuiteDoc.readonly = readonly ?? false;
   }, [editor, readonly]);
+
+  useLegalClassificationInterceptor(editor.doc.blockSuiteDoc);
 
   return (
     <>

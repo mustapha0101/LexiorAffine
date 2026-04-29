@@ -100,10 +100,10 @@ export function summaryToMarkdown(summaryJson?: MeetingSummaryV2 | null) {
   }
 
   const lines = [
-    ...formatSection('Key Points', summaryJson.keyPoints),
-    ...formatSection('Decisions', summaryJson.decisions),
-    ...formatSection('Open Questions', summaryJson.openQuestions),
-    ...formatSection('Blockers', summaryJson.blockers),
+    ...formatSection('Points Clés', summaryJson.keyPoints),
+    ...formatSection('Décisions', summaryJson.decisions),
+    ...formatSection('Questions Ouvertes', summaryJson.openQuestions),
+    ...formatSection('Blocages', summaryJson.blockers),
   ].filter(Boolean);
 
   const markdown = lines.join('\n').trim();

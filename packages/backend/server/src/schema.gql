@@ -475,6 +475,7 @@ type Copilot {
 
   """Get the context list of a session"""
   contexts(contextId: String, sessionId: String): [CopilotContext!]!
+  documentIrac(blobId: String, jobId: String): IracResultType
   histories(docId: String, options: QueryChatHistoriesInput): [CopilotHistories!]! @deprecated(reason: "use `chats` instead")
 
   """List available models for a prompt, with human-readable names"""
@@ -1351,6 +1352,15 @@ type InvoiceType {
   updatedAt: DateTime!
 }
 
+type IracResultType {
+  application: String
+  conclusion: String
+  id: ID!
+  issue: String
+  rule: String
+  status: AiJobStatus!
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -1525,6 +1535,7 @@ type Mutation {
   changeEmail(email: String!, token: String!): UserType!
   changePassword(newPassword: String!, token: String!, userId: String): Boolean!
   claimAudioTranscription(jobId: String!): TranscriptionResultType
+  claimDocumentIrac(jobId: String!): IracResultType
 
   """Cleanup sessions"""
   cleanupCopilotSession(options: DeleteSessionInput!): [String!]!
@@ -1650,6 +1661,7 @@ type Mutation {
   sendVerifyEmail(callbackUrl: String!): Boolean!
   setBlob(blob: Upload!, workspaceId: String!): String!
   submitAudioTranscription(blob: Upload, blobId: String!, blobs: [Upload!], input: SubmitAudioTranscriptionInput, workspaceId: String!): TranscriptionResultType
+  submitDocumentIrac(blobId: String!, type: String, workspaceId: String!): IracResultType
 
   """Trigger cleanup of trashed doc embeddings"""
   triggerCleanupTrashedDocEmbeddings: Boolean!

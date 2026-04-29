@@ -10,8 +10,11 @@ import { WorkspaceShareSettingService } from '@affine/core/modules/share-setting
 import { useI18n } from '@affine/i18n';
 import { useLiveData, useService } from '@toeverything/infra';
 
+import { useAppSettingHelper } from '@affine/core/components/hooks/affine/use-app-setting-helper';
+
 export const AiSetting = () => {
   const t = useI18n();
+  const { appSettings, updateSettings } = useAppSettingHelper();
   const shareSetting = useService(WorkspaceShareSettingService).sharePreview;
   const serverService = useService(ServerService);
   const serverEnableAi = useLiveData(

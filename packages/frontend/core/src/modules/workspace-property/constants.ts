@@ -7,6 +7,12 @@ import type { DocCustomPropertyInfo } from '../db';
  */
 export const BUILT_IN_CUSTOM_PROPERTY_TYPE: DocCustomPropertyInfo[] = [
   {
+    id: 'custom:date_audience',
+    name: "Date d'audience",
+    type: 'date',
+    index: 'a0000000',
+  },
+  {
     id: 'tags',
     type: 'tags',
     index: 'a0000001',

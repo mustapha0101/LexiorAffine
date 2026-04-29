@@ -1,0 +1,14 @@
+query documentIrac($jobId: String, $blobId: String) {
+  currentUser {
+    copilot {
+      documentIrac(jobId: $jobId, blobId: $blobId) {
+        id
+        status
+        issue
+        rule
+        application
+        conclusion
+      }
+    }
+  }
+}

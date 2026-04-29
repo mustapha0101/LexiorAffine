@@ -8,6 +8,7 @@ import { FeatureModule } from '../../core/features';
 import { PermissionModule } from '../../core/permission';
 import { QuotaModule } from '../../core/quota';
 import { WorkspaceModule } from '../../core/workspaces';
+import { StorageModule } from '../../core/storage';
 import { IndexerModule } from '../indexer';
 import {
   CopilotContextResolver,
@@ -33,6 +34,10 @@ import {
   CopilotTranscriptionResolver,
   CopilotTranscriptionService,
 } from './transcript';
+import {
+  CopilotIracResolver,
+  CopilotIracService,
+} from './irac';
 import { CopilotWorkflowExecutors, CopilotWorkflowService } from './workflow';
 import {
   CopilotWorkspaceEmbeddingConfigResolver,
@@ -49,6 +54,7 @@ import {
     ServerConfigModule,
     WorkspaceModule,
     IndexerModule,
+    StorageModule,
   ],
   providers: [
     // providers
@@ -72,6 +78,9 @@ import {
     // transcription
     CopilotTranscriptionService,
     CopilotTranscriptionResolver,
+    // irac
+    CopilotIracService,
+    CopilotIracResolver,
     // workspace embeddings
     CopilotWorkspaceService,
     CopilotWorkspaceEmbeddingResolver,

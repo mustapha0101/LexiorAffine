@@ -1,0 +1,10 @@
+mutation claimDocumentIrac($jobId: String!) {
+  claimDocumentIrac(jobId: $jobId) {
+    id
+    status
+    issue
+    rule
+    application
+    conclusion
+  }
+}

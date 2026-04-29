@@ -122,7 +122,7 @@ export const Component = () => {
       }
       const session = await client.createSessionWithHistory({
         workspaceId,
-        promptName: 'Chat With AFFiNE AI' satisfies PromptKey,
+        promptName: 'Chat With LexiorGPT' satisfies PromptKey,
         reuseLatestChat: false,
         ...options,
       });
@@ -175,7 +175,7 @@ export const Component = () => {
       reMountChatContent();
       const session = await client.createSessionWithHistory({
         workspaceId,
-        promptName: 'Chat With AFFiNE AI' satisfies PromptKey,
+        promptName: 'Chat With LexiorGPT' satisfies PromptKey,
         reuseLatestChat: false,
       });
       setCurrentSession(session);

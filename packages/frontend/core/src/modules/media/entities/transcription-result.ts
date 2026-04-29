@@ -37,10 +37,10 @@ export function summaryJsonToMarkdown(
   }
 
   return [
-    ...summaryJson.keyPoints.map(item => `- ${item}`),
-    ...formatSection('Decisions', summaryJson.decisions),
-    ...formatSection('Open Questions', summaryJson.openQuestions),
-    ...formatSection('Blockers', summaryJson.blockers),
+    ...formatSection('Points Clés', summaryJson.keyPoints),
+    ...formatSection('Décisions', summaryJson.decisions),
+    ...formatSection('Questions Ouvertes', summaryJson.openQuestions),
+    ...formatSection('Blocages', summaryJson.blockers),
   ]
     .join('\n')
     .trim();
@@ -79,11 +79,9 @@ export function buildTranscriptionResult(
   payload: TranscriptionPayloadLike
 ): TranscriptionResult {
   return {
-    title: payload.title ?? payload.summaryJson?.title ?? '',
-    summary: payload.summary ?? summaryJsonToMarkdown(payload.summaryJson),
-    actions: payload.actions ?? actionItemsToMarkdown(payload.summaryJson),
-    segments:
-      payload.transcription ??
-      normalizedSegmentsToResult(payload.normalizedSegments),
+    title: payload.summaryJson?.title ?? payload.title ?? '',
+    summary: payload.summaryJson ? summaryJsonToMarkdown(payload.summaryJson) : (payload.summary ?? ''),
+    actions: payload.summaryJson ? actionItemsToMarkdown(payload.summaryJson) : (payload.actions ?? ''),
+    segments: payload.normalizedSegments ? normalizedSegmentsToResult(payload.normalizedSegments) : (payload.transcription ?? []),
   };
 }

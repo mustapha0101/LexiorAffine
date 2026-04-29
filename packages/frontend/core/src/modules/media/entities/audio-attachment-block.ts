@@ -119,18 +119,23 @@ export class AudioAttachmentBlock extends Entity<AttachmentBlockModel> {
       throw new Error('No source id');
     }
 
+    let transcriptionBlockId = this.transcriptionBlock$.value?.id;
     let transcriptionBlockProps = this.transcriptionBlock$.value?.props;
 
-    if (!transcriptionBlockProps) {
+    if (!transcriptionBlockId) {
       // transcription block is not created yet, we need to create it
-      this.props.store.addBlock(
+      transcriptionBlockId = this.props.store.addBlock(
         'affine:transcription',
         {
           transcription: {},
         },
         this.props.id
       );
-      transcriptionBlockProps = this.transcriptionBlock$.value?.props;
+      // Synchronously retrieve the created block's props so we don't depend on the reactive update
+      const block = this.props.store.getBlock(transcriptionBlockId);
+      if (block) {
+        transcriptionBlockProps = (block.model as unknown as TranscriptionBlockModel).props;
+      }
     }
 
     const job = this.framework.createEntity(AudioTranscriptionJob, {
@@ -141,9 +146,16 @@ export class AudioAttachmentBlock extends Entity<AttachmentBlockModel> {
         if (!buffer) {
           throw new Error('No audio buffer available');
         }
-        const currentTranscriptionBlockProps = requireTranscriptionBlockProps(
-          this.transcriptionBlock$.value?.props
-        );
+        
+        let currentProps = this.transcriptionBlock$.value?.props;
+        if (!currentProps && transcriptionBlockId) {
+           const block = this.props.store.getBlock(transcriptionBlockId);
+           if (block) {
+             currentProps = (block.model as unknown as TranscriptionBlockModel).props;
+           }
+        }
+        const currentTranscriptionBlockProps = requireTranscriptionBlockProps(currentProps);
+
         const { files, sourceAudio, sliceManifest } =
           await preprocessAudioBlobForTranscription(buffer, {
             fileNameBase: this.props.props.name,
@@ -193,6 +205,17 @@ export class AudioAttachmentBlock extends Entity<AttachmentBlockModel> {
   ) => {
     this.props.props.caption = result.title ?? '';
 
+    let transcriptionBlockId = this.transcriptionBlock$.value?.id;
+    if (!transcriptionBlockId) {
+      transcriptionBlockId = this.props.store.addBlock(
+        'affine:transcription',
+        {
+          transcription: {},
+        },
+        this.props.id
+      );
+    }
+
     const addCalloutBlock = (
       emoji: string,
       title: string,
@@ -203,7 +226,7 @@ export class AudioAttachmentBlock extends Entity<AttachmentBlockModel> {
         {
           emoji,
         },
-        this.transcriptionBlock$.value?.id
+        transcriptionBlockId
       );
       this.props.store.addBlock(
         'affine:paragraph',
@@ -221,7 +244,7 @@ export class AudioAttachmentBlock extends Entity<AttachmentBlockModel> {
       return calloutId;
     };
     const fillTranscription = (segments: TranscriptionResult['segments']) => {
-      const calloutId = addCalloutBlock('💬', 'Transcript', true);
+      const calloutId = addCalloutBlock('💬', 'Transcription', true);
 
       const speakerToColors = new Map<string, string>();
       for (const segment of segments) {
@@ -253,7 +276,7 @@ export class AudioAttachmentBlock extends Entity<AttachmentBlockModel> {
     };
 
     const fillSummary = async (summary: TranscriptionResult['summary']) => {
-      const calloutId = addCalloutBlock('📑', 'Summary');
+      const calloutId = addCalloutBlock('📑', 'Résumé');
       await insertFromMarkdown(
         undefined,
         summary,
@@ -267,7 +290,7 @@ export class AudioAttachmentBlock extends Entity<AttachmentBlockModel> {
       if (!actions) {
         return;
       }
-      const calloutId = addCalloutBlock('🎯', 'Todo');
+      const calloutId = addCalloutBlock('🎯', "Points d'Action");
       await insertFromMarkdown(
         undefined,
         actions ?? '',

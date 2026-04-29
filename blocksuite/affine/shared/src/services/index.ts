@@ -28,3 +28,4 @@ export * from './toolbar-service';
 export * from './user-service';
 export * from './viewport-element-service';
 export * from './virtual-keyboard-service';
+export * from './irac-service';

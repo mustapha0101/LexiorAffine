@@ -45,6 +45,27 @@ export const TagsValue = ({ readonly }: PropertyValueProps) => {
         onChange={() => {}}
         readonly={readonly}
       />
+      <button
+        onClick={(e: React.MouseEvent) => {
+          e.stopPropagation();
+          document.dispatchEvent(new CustomEvent('request-legal-classification', { detail: { pageId: doc.id } }));
+        }}
+        style={{
+          marginLeft: '8px',
+          background: 'transparent',
+          color: '#1e90ff',
+          border: '1px solid rgba(30,144,255,0.3)',
+          padding: '4px 8px',
+          borderRadius: '6px',
+          fontSize: '11px',
+          fontWeight: 600,
+          cursor: 'pointer',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          backgroundColor: 'rgba(255,255,255,0.7)',
+        }}
+      >
+        🏷️ Classifier par l'IA
+      </button>
     </PropertyValue>
   );
 };

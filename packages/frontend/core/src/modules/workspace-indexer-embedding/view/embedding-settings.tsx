@@ -22,6 +22,7 @@ import { EmbeddingService } from '../services/embedding';
 import { Attachments } from './attachments';
 import EmbeddingProgress from './embedding-progress';
 import { IgnoredDocs } from './ignored-docs';
+import { useAppSettingHelper } from '@affine/core/components/hooks/affine/use-app-setting-helper';
 
 interface EmbeddingSettingsProps {}
 
@@ -33,6 +34,7 @@ const EmbeddingCloud: React.FC<{ disabled: boolean }> = ({ disabled }) => {
   const t = useI18n();
   const embeddingService = useService(EmbeddingService);
   const workspaceDialogService = useService(WorkspaceDialogService);
+  const { appSettings, updateSettings } = useAppSettingHelper();
 
   const embeddingEnabled = useLiveData(
     embeddingService.embeddingEnabled.enabled$
@@ -206,6 +208,16 @@ const EmbeddingCloud: React.FC<{ disabled: boolean }> = ({ disabled }) => {
           checked={embeddingEnabled ?? false}
           onChange={handleEmbeddingToggle}
           disabled={isEnabledLoading}
+        />
+      </SettingRow>
+
+      <SettingRow
+        name="Extraction automatique de la date d'audience"
+        desc="Permet à l'IA d'analyser automatiquement vos documents pour extraire et remplir la date de l'audience."
+      >
+        <Switch
+          checked={(appSettings as any).autoExtractAudienceDate}
+          onChange={(checked) => updateSettings('autoExtractAudienceDate' as any, checked)}
         />
       </SettingRow>
       {

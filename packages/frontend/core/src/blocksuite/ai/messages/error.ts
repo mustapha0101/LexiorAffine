@@ -188,7 +188,7 @@ export class AIErrorWrapper extends SignalWatcher(WithDisposable(LitElement)) {
 
 const PaymentRequiredErrorRenderer = (host?: EditorHost | null) => html`
   <ai-error-wrapper
-    .text=${"You've reached the current usage cap for AFFiNE AI. You can subscribe to AFFiNE AI(with free 7-day-trial) to continue the AI experience!"}
+    .text=${"You've reached the current usage cap for LexiorGPT. You can subscribe to LexiorGPT(with free 7-day-trial) to continue the AI experience!"}
     .actionText=${'Upgrade'}
     .onClick=${() => AIProvider.slots.requestUpgradePlan.next({ host })}
   ></ai-error-wrapper>
@@ -196,7 +196,7 @@ const PaymentRequiredErrorRenderer = (host?: EditorHost | null) => html`
 
 const LoginRequiredErrorRenderer = (host?: EditorHost | null) => html`
   <ai-error-wrapper
-    .text=${'You need to login to AFFiNE Cloud to continue using AFFiNE AI.'}
+    .text=${'You need to login to AFFiNE Cloud to continue using LexiorGPT.'}
     .actionText=${'Login'}
     .onClick=${() => AIProvider.slots.requestLogin.next({ host })}
   ></ai-error-wrapper>

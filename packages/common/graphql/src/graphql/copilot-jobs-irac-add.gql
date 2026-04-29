@@ -1,0 +1,12 @@
+mutation submitDocumentIrac(
+  $workspaceId: String!
+  $blobId: String!
+) {
+  submitDocumentIrac(
+    blobId: $blobId
+    workspaceId: $workspaceId
+  ) {
+    id
+    status
+  }
+}

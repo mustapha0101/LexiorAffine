@@ -132,7 +132,7 @@ export class PlaygroundContent extends SignalWatcher(
       const rootSessionId = await AIProvider.session?.createSession({
         docId: this.doc.id,
         workspaceId: this.doc.workspace.id,
-        promptName: 'Chat With AFFiNE AI',
+        promptName: 'Chat With LexiorGPT',
       });
       if (rootSessionId) {
         this.rootSessionId = rootSessionId;

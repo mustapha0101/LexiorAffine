@@ -21,6 +21,7 @@ import {
   CitationProvider,
   DocModeProvider,
   FileSizeLimitProvider,
+  IracProvider,
   TelemetryProvider,
 } from '@blocksuite/affine-shared/services';
 import {
@@ -34,7 +35,7 @@ import {
   WarningIcon,
 } from '@blocksuite/icons/lit';
 import { BlockSelection } from '@blocksuite/std';
-import { nanoid, Slice } from '@blocksuite/store';
+import { nanoid, Slice, Text } from '@blocksuite/store';
 import { batch, computed, signal } from '@preact/signals-core';
 import { html, type TemplateResult } from 'lit';
 import { choose } from 'lit/directives/choose.js';
@@ -59,6 +60,8 @@ type AttachmentResolvedStateInfo = ResolvedStateInfo & {
 })
 export class AttachmentBlockComponent extends CaptionedBlockComponent<AttachmentBlockModel> {
   static override styles = styles;
+
+  private iracStatus: 'idle' | 'processing' | 'failed' | 'finished' = 'idle';
 
   blockDraggable = true;
 
@@ -241,10 +244,25 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
 
     if (!this.model.props.style && !this.store.readonly) {
       this.store.withoutTransact(() => {
+        const isAudio = this.model.props.type?.startsWith('audio/');
         this.store.updateBlock(this.model, {
           style: AttachmentBlockStyles[1],
+          embed: isAudio ? true : false,
         });
       });
+    }
+
+    const iracProvider = this.std.getOptional(IracProvider);
+    if (iracProvider) {
+      iracProvider.mount(this.model);
+      this.iracStatus = iracProvider.getJobStatus(this.model.id);
+      this.disposables.add(
+        iracProvider.onChangeJobStatus(this.model.id, (status) => {
+          this.iracStatus = status;
+          this.requestUpdate();
+        })
+      );
+      this.disposables.add(() => iracProvider.unmount(this.model));
     }
 
     this._trackCitationDeleteEvent();
@@ -444,11 +462,60 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
       error: resolvedState.error,
     };
 
-    return when(
-      cardStyle === 'cubeThick',
-      () => this.renderWithVertical(classInfo, resolvedState),
-      () => this.renderWithHorizontal(classInfo, resolvedState)
-    );
+    return html`
+      <div style="position: relative; width: 100%; border-radius: 8px; overflow: hidden;">
+        ${when(
+          cardStyle === 'cubeThick',
+          () => this.renderWithVertical(classInfo, resolvedState),
+          () => this.renderWithHorizontal(classInfo, resolvedState)
+        )}
+        ${when(
+          this.iracStatus === 'processing',
+          () => html`
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #1e90ff, #8a2be2, #1e90ff); background-size: 200% 100%; animation: irac-progress 2s linear infinite;"></div>
+            <div style="position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.7); color: #8a2be2; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 6px; backdrop-filter: blur(8px); border: 1px solid rgba(138,43,226,0.3); box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation: irac-spin 1.5s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+              Analyse en cours...
+            </div>
+            <style>
+              @keyframes irac-spin { 100% { transform: rotate(360deg); } }
+              @keyframes irac-progress { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+            </style>
+          `,
+          () => when(
+            this.filetype === 'pdf',
+            () => html`
+            <div style="position: absolute; top: 12px; right: 12px; display: flex; gap: 8px; z-index: 10;">
+              <button
+                @click=${(e: Event) => {
+                  e.stopPropagation();
+                  const iracProvider = this.std.getOptional(IracProvider);
+                  if (iracProvider) {
+                    iracProvider.startJob(this.model, 'summary');
+                  }
+                }}
+                style="background: transparent; color: #1e90ff; border: 1px solid rgba(30,144,255,0.3); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); background-color: rgba(255,255,255,0.7); backdrop-filter: blur(8px);"
+              >
+                📑 Résumé
+              </button>
+              <button
+                @click=${(e: Event) => {
+                  e.stopPropagation();
+                  const iracProvider = this.std.getOptional(IracProvider);
+                  if (iracProvider) {
+                    iracProvider.startJob(this.model, 'irac');
+                  }
+                }}
+                style="background: transparent; color: #8a2be2; border: 1px solid rgba(138,43,226,0.3); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); background-color: rgba(255,255,255,0.7); backdrop-filter: blur(8px);"
+              >
+                ✨ Résumé Juridique (IRAC)
+              </button>
+            </div>
+            `
+          )
+        )}
+      </div>
+    `;
   };
 
   protected renderEmbedView = () => {
@@ -510,13 +577,15 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
           focused: this.selected$.value,
           'comment-highlighted': this.isCommentHighlighted,
         })}
-        style=${this.containerStyleMap}
+        style="position: relative; ${this.containerStyleMap}"
       >
         ${when(
           this.isCitation,
           () => this._renderCitation(),
           () => this.renderEmbedView() ?? this.renderCardView()
         )}
+
+        ${this.model.children.length > 0 ? html`<div style="margin-top: 12px; padding: 0 12px; display: flex; flex-direction: column; gap: 8px;">${this.std.host.renderChildren(this.model)}</div>` : ''}
       </div>
     `;
   }
