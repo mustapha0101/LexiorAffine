@@ -681,6 +681,7 @@ enum AiJobStatus {
 
 enum AiJobType {
   transcription
+  irac
 }
 
 model AiJobs {

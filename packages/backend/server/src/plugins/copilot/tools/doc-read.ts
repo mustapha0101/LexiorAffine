@@ -64,10 +64,26 @@ export const buildDocContentGetter = (
       return documentSyncPendingError(docId);
     }
 
+    let markdownContent = content.markdown;
+    try {
+      const { readAllBlocksFromDocSnapshot } = await import('../../../core/utils/blocksuite');
+      const docRecord = await docReader.getDoc(options.workspace, docId);
+      if (docRecord) {
+        const result = await readAllBlocksFromDocSnapshot(docId, docRecord.bin);
+        const attachments = result.blocks.filter(b => b.flavour === 'affine:attachment' || b.flavour === 'affine:embed');
+        if (attachments && attachments.length > 0) {
+           const fileNames = attachments.map(a => (a.additional as any)?.name ?? (a.additional as any)?.title ?? 'document_attache').join(', ');
+           markdownContent += `\n\n[System Note: This document contains ${attachments.length} attached file(s) (${fileNames}). You MUST IMMEDIATELY invoke the \`docAnalyzeAttachments\` tool to extract and read the contents of these files before answering. DO NOT write any conversational text. DO NOT explain what you are going to do. ONLY output the tool call.]`;
+        }
+      }
+    } catch (e) {
+       logger.warn('Failed to parse attachments for doc-read', e);
+    }
+
     return {
       docId,
       title: content.title,
-      markdown: content.markdown,
+      markdown: markdownContent,
       createdAt: docMeta.createdAt,
       updatedAt: docMeta.updatedAt,
       createdByUser: docMeta.createdByUser,
@@ -86,7 +102,7 @@ export const createDocReadTool = (
 ) => {
   return defineTool({
     description:
-      'Return the complete text and basic metadata of a single document identified by docId; use this when the user needs the full content of a specific file rather than a search result.',
+      'Return the text content of a document (via Markdown) and its metadata. IMPORTANT: This tool DOES NOT extract text from attached files inside the document (like PDFs or Word files). If you need to analyze attachments, you MUST use the `docAnalyzeAttachments` tool instead or in addition to this one.',
     inputSchema: z.object({
       doc_id: z.string().describe('The target doc to read'),
     }),

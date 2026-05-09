@@ -14,6 +14,7 @@ import { CloudflareWorkersAIConfig } from './providers/cloudflare';
 import type { FalConfig } from './providers/fal';
 import { GeminiGenerativeConfig, GeminiVertexConfig } from './providers/gemini';
 import { MorphConfig } from './providers/morph';
+import { OllamaConfig } from './providers/ollama';
 import { OpenAIConfig } from './providers/openai';
 import { PerplexityConfig } from './providers/perplexity';
 import {
@@ -21,6 +22,8 @@ import {
   ModelOutputType,
   VertexSchema,
 } from './providers/types';
+
+import { WhisperConfig } from './providers/whisper';
 
 export type CopilotProviderConfigMap = {
   [CopilotProviderType.OpenAI]: OpenAIConfig;
@@ -32,6 +35,8 @@ export type CopilotProviderConfigMap = {
   [CopilotProviderType.Anthropic]: AnthropicOfficialConfig;
   [CopilotProviderType.AnthropicVertex]: AnthropicVertexConfig;
   [CopilotProviderType.Morph]: MorphConfig;
+  [CopilotProviderType.Ollama]: OllamaConfig;
+  [CopilotProviderType.Whisper]: WhisperConfig;
 };
 
 export type ProviderSpecificConfig =
@@ -152,6 +157,10 @@ const MorphConfigShape = z.object({
   apiKey: z.string().optional(),
 });
 
+const OllamaConfigShape = z.object({
+  baseURL: z.string().optional(),
+});
+
 const CopilotProviderProfileShape = z.discriminatedUnion('type', [
   CopilotProviderProfileBaseShape.extend({
     type: z.literal(CopilotProviderType.OpenAI),
@@ -189,6 +198,18 @@ const CopilotProviderProfileShape = z.discriminatedUnion('type', [
     type: z.literal(CopilotProviderType.Morph),
     config: MorphConfigShape,
   }),
+  CopilotProviderProfileBaseShape.extend({
+    type: z.literal(CopilotProviderType.Ollama),
+    config: OllamaConfigShape,
+  }),
+  CopilotProviderProfileBaseShape.extend({
+    type: z.literal(CopilotProviderType.Whisper),
+    config: z.object({
+      baseURL: z.string(),
+      apiKey: z.string().optional(),
+      model: z.string().optional(),
+    }),
+  }),
 ]);
 
 const CopilotProviderDefaultsShape = z.object({
@@ -225,6 +246,8 @@ declare global {
         anthropic: ConfigItem<AnthropicOfficialConfig>;
         anthropicVertex: ConfigItem<AnthropicVertexConfig>;
         morph: ConfigItem<MorphConfig>;
+        ollama: ConfigItem<OllamaConfig>;
+        whisper: ConfigItem<WhisperConfig>;
       };
     };
   }
@@ -238,8 +261,18 @@ defineModuleConfig('copilot', {
   scenarios: {
     desc: 'Use custom models in scenarios and override default settings.',
     default: {
-      override_enabled: false,
-      scenarios: {
+      override_enabled: process.env.LEXIOR_LOCAL_AI_MODE === 'true',
+      scenarios: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? {
+        audio_transcribing: 'whisper-1',
+        chat: 'qwen3:8b',
+        embedding: 'nomic-embed-text:latest',
+        image: 'gpt-image-1', // Assuming no local image gen model is registered yet
+        coding: 'mistral:7b-instruct-q4_K_M',
+        complex_text_generation: 'mistral:7b-instruct-q4_K_M',
+        quick_decision_making: 'mistral:7b-instruct-q4_K_M',
+        quick_text_generation: 'mistral:7b-instruct-q4_K_M',
+        polish_and_summarize: 'mistral:7b-instruct-q4_K_M',
+      } : {
         audio_transcribing: 'gemini-2.5-flash',
         chat: 'gemini-2.5-flash',
         embedding: 'gemini-embedding-001',
@@ -316,6 +349,18 @@ defineModuleConfig('copilot', {
   'providers.morph': {
     desc: 'The config for the morph provider.',
     default: {},
+  },
+  'providers.ollama': {
+    desc: 'The config for the ollama provider.',
+    default: {
+      baseURL: 'http://localhost:11434/v1',
+    },
+  },
+  'providers.whisper': {
+    desc: 'The config for the whisper provider.',
+    default: {
+      baseURL: '',
+    },
   },
   unsplash: {
     desc: 'The config for the unsplash key.',

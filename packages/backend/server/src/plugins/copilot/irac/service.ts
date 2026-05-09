@@ -118,6 +118,7 @@ export class CopilotIracService {
       payload,
       modelId,
       blobId,
+      type,
     });
 
     return { id: jobId, status };
@@ -188,7 +189,7 @@ export class CopilotIracService {
       if (!dbJob) throw new Error(`Job not found: ${jobId}`);
       const workspaceId = dbJob.workspaceId;
 
-      const actualModelId = modelId?.startsWith('gemini') ? modelId : 'gemini-2.5-flash';
+      const actualModelId = modelId || 'gemini-2.5-flash';
       const provider = await this.providerFactory.getProvider(
         {
           outputType: ModelOutputType.Structured,
@@ -208,23 +209,46 @@ C'est TRÈS IMPORTANT de mettre TOUT le résumé généré uniquement dans la pr
       }
       
       let attachments: any[] = [];
+      let extractedText: string | null = null;
       if (blobId && workspaceId) {
         const { body } = await this.workspaceStorage.get(workspaceId, blobId);
+        const blobMeta = await this.models.blob.get(workspaceId, blobId);
         if (body) {
           const buffer = await readBufferWithLimit(body as any, 50 * OneMB);
-          attachments.push({
-            kind: 'bytes',
-            data: buffer.toString('base64'),
-            mimeType: 'application/pdf',
-          });
+          const mime = blobMeta?.mime || 'application/pdf';
+          
+          if (mime !== 'application/pdf') {
+            try {
+              const { parseOffice } = await import('officeparser');
+              const ast = await parseOffice(buffer);
+              extractedText = ast.toText();
+            } catch (err) {
+               console.warn("IRAC: Could not parse office file, falling back to raw attachment", err);
+               attachments.push({
+                 kind: 'bytes',
+                 data: buffer.toString('base64'),
+                 mimeType: mime,
+               });
+            }
+          } else {
+             attachments.push({
+               kind: 'bytes',
+               data: buffer.toString('base64'),
+               mimeType: mime,
+             });
+          }
         }
       }
+
+      const promptContent = extractedText 
+        ? `Veuillez analyser le document suivant:\n\n${extractedText}` 
+        : "Veuillez analyser le document attaché.";
 
       const result = await provider.structure(
         { modelId: actualModelId },
         [
           { role: 'system' as const, content: instruction },
-          { role: 'user' as const, content: "Veuillez analyser le document attaché.", attachments }
+          { role: 'user' as const, content: promptContent, attachments }
         ],
         { schema: IracResponseSchema }
       );

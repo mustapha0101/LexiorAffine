@@ -48,9 +48,9 @@ export function useAFFiNEI18N(): {
       */
     ["404.signOut"](): string;
     /**
-      * `AFFiNE Cloud`
+      * `Lexior Cloud`
       */
-    ["AFFiNE Cloud"](): string;
+    ["Lexior Cloud"](): string;
     /**
       * `All docs`
       */
@@ -184,15 +184,15 @@ export function useAFFiNEI18N(): {
       */
     Enable(): string;
     /**
-      * `Enable AFFiNE Cloud`
+      * `Enable Lexior Cloud`
       */
-    ["Enable AFFiNE Cloud"](): string;
+    ["Enable Lexior Cloud"](): string;
     /**
-      * `If enabled, the data in this workspace will be backed up and synchronised via AFFiNE Cloud.`
+      * `If enabled, the data in this workspace will be backed up and synchronised via Lexior Cloud.`
       */
-    ["Enable AFFiNE Cloud Description"](): string;
+    ["Enable Lexior Cloud Description"](): string;
     /**
-      * `The following functions rely on AFFiNE Cloud. All data is stored on the current device. You can enable AFFiNE Cloud for this workspace to keep data in sync with the cloud.`
+      * `The following functions rely on Lexior Cloud. All data is stored on the current device. You can enable Lexior Cloud for this workspace to keep data in sync with the cloud.`
       */
     ["Enable cloud hint"](): string;
     /**
@@ -482,9 +482,9 @@ export function useAFFiNEI18N(): {
       */
     Sync(): string;
     /**
-      * `Synced with AFFiNE Cloud`
+      * `Synced with Lexior Cloud`
       */
-    ["Synced with AFFiNE Cloud"](): string;
+    ["Synced with Lexior Cloud"](): string;
     /**
       * `Tags`
       */
@@ -612,129 +612,129 @@ export function useAFFiNEI18N(): {
     /**
       * `Automatically check for new updates periodically.`
       */
-    ["com.affine.aboutAFFiNE.autoCheckUpdate.description"](): string;
+    ["com.affine.aboutLexior Notebook.autoCheckUpdate.description"](): string;
     /**
       * `Check for updates automatically`
       */
-    ["com.affine.aboutAFFiNE.autoCheckUpdate.title"](): string;
+    ["com.affine.aboutLexior Notebook.autoCheckUpdate.title"](): string;
     /**
       * `Automatically download updates (to this device).`
       */
-    ["com.affine.aboutAFFiNE.autoDownloadUpdate.description"](): string;
+    ["com.affine.aboutLexior Notebook.autoDownloadUpdate.description"](): string;
     /**
       * `Download updates automatically`
       */
-    ["com.affine.aboutAFFiNE.autoDownloadUpdate.title"](): string;
+    ["com.affine.aboutLexior Notebook.autoDownloadUpdate.title"](): string;
     /**
-      * `View the AFFiNE Changelog.`
+      * `View the Lexior Notebook Changelog.`
       */
-    ["com.affine.aboutAFFiNE.changelog.description"](): string;
+    ["com.affine.aboutLexior Notebook.changelog.description"](): string;
     /**
       * `Discover what's new`
       */
-    ["com.affine.aboutAFFiNE.changelog.title"](): string;
+    ["com.affine.aboutLexior Notebook.changelog.title"](): string;
     /**
       * `Check for update`
       */
-    ["com.affine.aboutAFFiNE.checkUpdate.button.check"](): string;
+    ["com.affine.aboutLexior Notebook.checkUpdate.button.check"](): string;
     /**
       * `Download update`
       */
-    ["com.affine.aboutAFFiNE.checkUpdate.button.download"](): string;
+    ["com.affine.aboutLexior Notebook.checkUpdate.button.download"](): string;
     /**
       * `Restart to update`
       */
-    ["com.affine.aboutAFFiNE.checkUpdate.button.restart"](): string;
+    ["com.affine.aboutLexior Notebook.checkUpdate.button.restart"](): string;
     /**
       * `Retry`
       */
-    ["com.affine.aboutAFFiNE.checkUpdate.button.retry"](): string;
+    ["com.affine.aboutLexior Notebook.checkUpdate.button.retry"](): string;
     /**
       * `New version is ready`
       */
-    ["com.affine.aboutAFFiNE.checkUpdate.description"](): string;
+    ["com.affine.aboutLexior Notebook.checkUpdate.description"](): string;
     /**
       * `Manually check for updates.`
       */
-    ["com.affine.aboutAFFiNE.checkUpdate.subtitle.check"](): string;
+    ["com.affine.aboutLexior Notebook.checkUpdate.subtitle.check"](): string;
     /**
       * `Checking for updates...`
       */
-    ["com.affine.aboutAFFiNE.checkUpdate.subtitle.checking"](): string;
+    ["com.affine.aboutLexior Notebook.checkUpdate.subtitle.checking"](): string;
     /**
       * `Downloading the latest version...`
       */
-    ["com.affine.aboutAFFiNE.checkUpdate.subtitle.downloading"](): string;
+    ["com.affine.aboutLexior Notebook.checkUpdate.subtitle.downloading"](): string;
     /**
       * `Unable to connect to the update server.`
       */
-    ["com.affine.aboutAFFiNE.checkUpdate.subtitle.error"](): string;
+    ["com.affine.aboutLexior Notebook.checkUpdate.subtitle.error"](): string;
     /**
-      * `You've got the latest version of AFFiNE.`
+      * `You've got the latest version of Lexior Notebook.`
       */
-    ["com.affine.aboutAFFiNE.checkUpdate.subtitle.latest"](): string;
+    ["com.affine.aboutLexior Notebook.checkUpdate.subtitle.latest"](): string;
     /**
       * `Restart to apply update.`
       */
-    ["com.affine.aboutAFFiNE.checkUpdate.subtitle.restart"](): string;
+    ["com.affine.aboutLexior Notebook.checkUpdate.subtitle.restart"](): string;
     /**
       * `New update available ({{version}})`
       */
-    ["com.affine.aboutAFFiNE.checkUpdate.subtitle.update-available"](options: {
+    ["com.affine.aboutLexior Notebook.checkUpdate.subtitle.update-available"](options: {
         readonly version: string;
     }): string;
     /**
       * `Check for updates`
       */
-    ["com.affine.aboutAFFiNE.checkUpdate.title"](): string;
+    ["com.affine.aboutLexior Notebook.checkUpdate.title"](): string;
     /**
       * `Communities`
       */
-    ["com.affine.aboutAFFiNE.community.title"](): string;
+    ["com.affine.aboutLexior Notebook.community.title"](): string;
     /**
-      * `AFFiNE community`
+      * `Lexior Notebook community`
       */
-    ["com.affine.aboutAFFiNE.contact.community"](): string;
+    ["com.affine.aboutLexior Notebook.contact.community"](): string;
     /**
       * `Contact us`
       */
-    ["com.affine.aboutAFFiNE.contact.title"](): string;
+    ["com.affine.aboutLexior Notebook.contact.title"](): string;
     /**
       * `Official website`
       */
-    ["com.affine.aboutAFFiNE.contact.website"](): string;
+    ["com.affine.aboutLexior Notebook.contact.website"](): string;
     /**
       * `Privacy`
       */
-    ["com.affine.aboutAFFiNE.legal.privacy"](): string;
+    ["com.affine.aboutLexior Notebook.legal.privacy"](): string;
     /**
       * `Legal Info`
       */
-    ["com.affine.aboutAFFiNE.legal.title"](): string;
+    ["com.affine.aboutLexior Notebook.legal.title"](): string;
     /**
       * `Terms of use`
       */
-    ["com.affine.aboutAFFiNE.legal.tos"](): string;
+    ["com.affine.aboutLexior Notebook.legal.tos"](): string;
     /**
-      * `Information about AFFiNE`
+      * `Information about Lexior Notebook`
       */
-    ["com.affine.aboutAFFiNE.subtitle"](): string;
+    ["com.affine.aboutLexior Notebook.subtitle"](): string;
     /**
-      * `About AFFiNE`
+      * `About Lexior Notebook`
       */
-    ["com.affine.aboutAFFiNE.title"](): string;
+    ["com.affine.aboutLexior Notebook.title"](): string;
     /**
       * `App version`
       */
-    ["com.affine.aboutAFFiNE.version.app"](): string;
+    ["com.affine.aboutLexior Notebook.version.app"](): string;
     /**
       * `Editor version`
       */
-    ["com.affine.aboutAFFiNE.version.editor.title"](): string;
+    ["com.affine.aboutLexior Notebook.version.editor.title"](): string;
     /**
       * `Version`
       */
-    ["com.affine.aboutAFFiNE.version.title"](): string;
+    ["com.affine.aboutLexior Notebook.version.title"](): string;
     /**
       * `Get started`
       */
@@ -756,15 +756,15 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.ai-onboarding.general.1.description"](): string;
     /**
-      * `Meet AFFiNE AI`
+      * `Meet LexiorGPT`
       */
     ["com.affine.ai-onboarding.general.1.title"](): string;
     /**
-      * `Answer questions, draft docs, visualize ideas - AFFiNE AI can save you time at every possible step. Powered by GPT's most powerful model.`
+      * `Answer questions, draft docs, visualize ideas - LexiorGPT can save you time at every possible step. Powered by GPT's most powerful model.`
       */
     ["com.affine.ai-onboarding.general.2.description"](): string;
     /**
-      * `Chat with AFFiNE AI`
+      * `Chat with LexiorGPT`
       */
     ["com.affine.ai-onboarding.general.2.title"](): string;
     /**
@@ -772,7 +772,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.ai-onboarding.general.3.description"](): string;
     /**
-      * `Edit inline with AFFiNE AI`
+      * `Edit inline with LexiorGPT`
       */
     ["com.affine.ai-onboarding.general.3.title"](): string;
     /**
@@ -784,7 +784,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.ai-onboarding.general.4.title"](): string;
     /**
-      * `AFFiNE AI is ready`
+      * `LexiorGPT is ready`
       */
     ["com.affine.ai-onboarding.general.5.title"](): string;
     /**
@@ -828,7 +828,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.ai-onboarding.local.message"](): string;
     /**
-      * `Meet AFFiNE AI`
+      * `Meet LexiorGPT`
       */
     ["com.affine.ai-onboarding.local.title"](): string;
     /**
@@ -836,7 +836,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.ai-scroll-tip.tag"](): string;
     /**
-      * `Meet AFFiNE AI`
+      * `Meet LexiorGPT`
       */
     ["com.affine.ai-scroll-tip.title"](): string;
     /**
@@ -856,7 +856,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.ai.login-required.dialog-confirm"](): string;
     /**
-      * `To use AFFiNE AI, please sign in to your AFFiNE Cloud account.`
+      * `To use LexiorGPT, please sign in to your Lexior Cloud account.`
       */
     ["com.affine.ai.login-required.dialog-content"](): string;
     /**
@@ -868,11 +868,11 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.ai.template-insert.failed"](): string;
     /**
-      * `AFFiNE AI`
+      * `LexiorGPT`
       */
     ["com.affine.ai.chat-panel.title"](): string;
     /**
-      * `AFFiNE AI is loading history...`
+      * `LexiorGPT is loading history...`
       */
     ["com.affine.ai.chat-panel.loading-history"](): string;
     /**
@@ -951,7 +951,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.appearanceSettings.color.title"](): string;
     /**
-      * `Edit all AFFiNE theme variables here`
+      * `Edit all Lexior Notebook theme variables here`
       */
     ["com.affine.appearanceSettings.customize-theme.description"](): string;
     /**
@@ -1019,7 +1019,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.appearanceSettings.sidebar.title"](): string;
     /**
-      * `Customize your AFFiNE appearance`
+      * `Customize your Lexior Notebook appearance`
       */
     ["com.affine.appearanceSettings.subtitle"](): string;
     /**
@@ -1031,7 +1031,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.appearanceSettings.menubar.toggle"](): string;
     /**
-      * `Display the menubar app in the tray for quick access to AFFiNE or meeting recordings.`
+      * `Display the menubar app in the tray for quick access to Lexior Notebook or meeting recordings.`
       */
     ["com.affine.appearanceSettings.menubar.description"](): string;
     /**
@@ -1043,7 +1043,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.appearanceSettings.menubar.windowBehavior.openOnLeftClick.toggle"](): string;
     /**
-      * `Open AFFiNE when left‑clicking the tray icon.`
+      * `Open Lexior Notebook when left‑clicking the tray icon.`
       */
     ["com.affine.appearanceSettings.menubar.windowBehavior.openOnLeftClick.description"](): string;
     /**
@@ -1051,7 +1051,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.appearanceSettings.menubar.windowBehavior.minimizeToTray.toggle"](): string;
     /**
-      * `Minimize AFFiNE to the system tray.`
+      * `Minimize Lexior Notebook to the system tray.`
       */
     ["com.affine.appearanceSettings.menubar.windowBehavior.minimizeToTray.description"](): string;
     /**
@@ -1059,7 +1059,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.appearanceSettings.menubar.windowBehavior.closeToTray.toggle"](): string;
     /**
-      * `Close AFFiNE to the system tray.`
+      * `Close Lexior Notebook to the system tray.`
       */
     ["com.affine.appearanceSettings.menubar.windowBehavior.closeToTray.description"](): string;
     /**
@@ -1067,7 +1067,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.appearanceSettings.menubar.windowBehavior.startMinimized.toggle"](): string;
     /**
-      * `Start AFFiNE minimized to the system tray.`
+      * `Start Lexior Notebook minimized to the system tray.`
       */
     ["com.affine.appearanceSettings.menubar.windowBehavior.startMinimized.description"](): string;
     /**
@@ -1105,7 +1105,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.auth.change.email.page.subtitle"](): string;
     /**
-      * `Congratulations! You have successfully updated the email address associated with your AFFiNE Cloud account.`
+      * `Congratulations! You have successfully updated the email address associated with your Lexior Cloud account.`
       */
     ["com.affine.auth.change.email.page.success.subtitle"](): string;
     /**
@@ -1125,7 +1125,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.auth.later"](): string;
     /**
-      * `Open AFFiNE`
+      * `Open Lexior Notebook`
       */
     ["com.affine.auth.open.affine"](): string;
     /**
@@ -1157,7 +1157,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.auth.open.affine.doc.edit-settings"](): string;
     /**
-      * `Requires AFFiNE desktop app version 0.18 or later.`
+      * `Requires Lexior Notebook desktop app version 0.18 or later.`
       */
     ["com.affine.auth.open.affine.doc.footer-text"](): string;
     /**
@@ -1168,7 +1168,7 @@ export function useAFFiNEI18N(): {
         max: string;
     }>): string;
     /**
-      * `Welcome to AFFiNE Cloud, you are almost there!`
+      * `Welcome to Lexior Cloud, you are almost there!`
       */
     ["com.affine.auth.page.sent.email.title"](): string;
     /**
@@ -1196,7 +1196,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.auth.reset.password.page.success"](): string;
     /**
-      * `Reset your AFFiNE Cloud password`
+      * `Reset your Lexior Cloud password`
       */
     ["com.affine.auth.reset.password.page.title"](): string;
     /**
@@ -1250,7 +1250,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.auth.sent.change.password.hint"](): string;
     /**
-      * `Your password has been updated! You can sign in AFFiNE Cloud with new password!`
+      * `Your password has been updated! You can sign in Lexior Cloud with new password!`
       */
     ["com.affine.auth.sent.reset.password.success.message"](): string;
     /**
@@ -1258,7 +1258,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.auth.sent.set.password.hint"](): string;
     /**
-      * `Your password has saved! You can sign in AFFiNE Cloud with email and password!`
+      * `Your password has saved! You can sign in Lexior Cloud with email and password!`
       */
     ["com.affine.auth.sent.set.password.success.message"](): string;
     /**
@@ -1297,7 +1297,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.auth.set.password.page.success"](): string;
     /**
-      * `Set your AFFiNE Cloud password`
+      * `Set your Lexior Cloud password`
       */
     ["com.affine.auth.set.password.page.title"](): string;
     /**
@@ -1395,7 +1395,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.auth.sign.up.sent.email.subtitle"](): string;
     /**
-      * `The app will automatically open or redirect to the web version. If you encounter any issues, you can also click the button below to manually open the AFFiNE app.`
+      * `The app will automatically open or redirect to the web version. If you encounter any issues, you can also click the button below to manually open the Lexior Notebook app.`
       */
     ["com.affine.auth.sign.up.success.subtitle"](): string;
     /**
@@ -1403,7 +1403,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.auth.sign.up.success.title"](): string;
     /**
-      * `You have successfully signed in. The app will automatically open or redirect to the web version. if you encounter any issues, you can also click the button below to  manually open the AFFiNE app.`
+      * `You have successfully signed in. The app will automatically open or redirect to the web version. if you encounter any issues, you can also click the button below to  manually open the Lexior Notebook app.`
       */
     ["com.affine.auth.signed.success.subtitle"](): string;
     /**
@@ -1415,7 +1415,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.auth.toast.message.failed"](): string;
     /**
-      * `You have been signed in, start to sync your data with AFFiNE Cloud!`
+      * `You have been signed in, start to sync your data with Lexior Cloud!`
       */
     ["com.affine.auth.toast.message.signed-in"](): string;
     /**
@@ -1441,7 +1441,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.banner.local-warning"](): string;
     /**
-      * `AFFiNE Cloud`
+      * `Lexior Cloud`
       */
     ["com.affine.brand.affineCloud"](): string;
     /**
@@ -1457,11 +1457,11 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.calendar-date-picker.week-days"](): string;
     /**
-      * `Host by AFFiNE.Pro, Save, sync, and backup all your data.`
+      * `Host by Lexior Notebook.Pro, Save, sync, and backup all your data.`
       */
     ["com.affine.cloud-scroll-tip.caption"](): string;
     /**
-      * `AFFiNE Cloud`
+      * `Lexior Cloud`
       */
     ["com.affine.cloud-scroll-tip.title"](): string;
     /**
@@ -2117,7 +2117,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.error.refetch"](): string;
     /**
-      * `Reload AFFiNE`
+      * `Reload Lexior Notebook`
       */
     ["com.affine.error.reload"](): string;
     /**
@@ -2349,15 +2349,15 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.history-vision.tips-modal.cancel"](): string;
     /**
-      * `Enable AFFiNE Cloud`
+      * `Enable Lexior Cloud`
       */
     ["com.affine.history-vision.tips-modal.confirm"](): string;
     /**
-      * `The current workspace is a local workspace, and we do not support version history for it at the moment. You can enable AFFiNE Cloud. This will sync the workspace with the Cloud, allowing you to use this feature.`
+      * `The current workspace is a local workspace, and we do not support version history for it at the moment. You can enable Lexior Cloud. This will sync the workspace with the Cloud, allowing you to use this feature.`
       */
     ["com.affine.history-vision.tips-modal.description"](): string;
     /**
-      * `History vision needs AFFiNE Cloud`
+      * `History vision needs Lexior Cloud`
       */
     ["com.affine.history-vision.tips-modal.title"](): string;
     /**
@@ -2459,7 +2459,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.import_file"](): string;
     /**
-      * `AFFiNE workspace data`
+      * `Lexior Notebook workspace data`
       */
     ["com.affine.import.affine-workspace-data"](): string;
     /**
@@ -2515,7 +2515,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.import.snapshot"](): string;
     /**
-      * `Import your AFFiNE workspace and page snapshot file.`
+      * `Import your Lexior Notebook workspace and page snapshot file.`
       */
     ["com.affine.import.snapshot.tooltip"](): string;
     /**
@@ -2523,7 +2523,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.import.dotaffinefile"](): string;
     /**
-      * `Import your AFFiNE db file (.affine)`
+      * `Import your Lexior Notebook db file (.affine)`
       */
     ["com.affine.import.dotaffinefile.tooltip"](): string;
     /**
@@ -2547,7 +2547,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.import.status.importing.title"](): string;
     /**
-      * `Your document has been imported successfully, thank you for choosing AFFiNE. Any questions please feel free to feedback to us`
+      * `Your document has been imported successfully, thank you for choosing Lexior Notebook. Any questions please feel free to feedback to us`
       */
     ["com.affine.import.status.success.message"](): string;
     /**
@@ -2903,7 +2903,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.mobile.sign-in.skip.hint"](): string;
     /**
-      * `Start AFFiNE without an account`
+      * `Start Lexior Notebook without an account`
       */
     ["com.affine.mobile.sign-in.skip.link"](): string;
     /**
@@ -2949,11 +2949,11 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.multi-tab.new-tab"](): string;
     /**
-      * `Enabling AFFiNE Cloud allows you to synchronise and backup data, as well as support multi-user collaboration and content publishing.`
+      * `Enabling Lexior Cloud allows you to synchronise and backup data, as well as support multi-user collaboration and content publishing.`
       */
     ["com.affine.nameWorkspace.affine-cloud.description"](): string;
     /**
-      * `Sync across devices with AFFiNE Cloud`
+      * `Sync across devices with Lexior Cloud`
       */
     ["com.affine.nameWorkspace.affine-cloud.title"](): string;
     /**
@@ -3013,7 +3013,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.notFoundPage.title"](): string;
     /**
-      * `AFFiNE Community`
+      * `Lexior Notebook Community`
       */
     ["com.affine.other-page.nav.affine-community"](): string;
     /**
@@ -3033,7 +3033,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.other-page.nav.official-website"](): string;
     /**
-      * `Open AFFiNE`
+      * `Open Lexior Notebook`
       */
     ["com.affine.other-page.nav.open-affine"](): string;
     /**
@@ -3261,7 +3261,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.page-properties.property.select.tooltips"](): string;
     /**
-      * `Enter a link to websites or AFFiNE docs. Useful for connecting to external resources and referencing internal docs.`
+      * `Enter a link to websites or Lexior Notebook docs. Useful for connecting to external resources and referencing internal docs.`
       */
     ["com.affine.page-properties.property.link.tooltips"](): string;
     /**
@@ -3407,7 +3407,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.pageMode.page"](): string;
     /**
-      * `Congratulations on your successful purchase of AFFiNE AI! You're now empowered to refine your content, generate images, and craft comprehensive mindmaps directly within AFFiNE AI, dramatically enhancing your productivity.`
+      * `Congratulations on your successful purchase of LexiorGPT! You're now empowered to refine your content, generate images, and craft comprehensive mindmaps directly within LexiorGPT, dramatically enhancing your productivity.`
       */
     ["com.affine.payment.ai-upgrade-success-page.text"](): string;
     /**
@@ -3419,7 +3419,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.payment.ai.action.cancel.button-label"](): string;
     /**
-      * `Keep AFFiNE AI`
+      * `Keep LexiorGPT`
       */
     ["com.affine.payment.ai.action.cancel.confirm.cancel-text"](): string;
     /**
@@ -3427,7 +3427,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.payment.ai.action.cancel.confirm.confirm-text"](): string;
     /**
-      * `If you end your subscription now, you can still use AFFiNE AI until the end of this billing period.`
+      * `If you end your subscription now, you can still use LexiorGPT until the end of this billing period.`
       */
     ["com.affine.payment.ai.action.cancel.confirm.description"](): string;
     /**
@@ -3451,7 +3451,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.payment.ai.action.resume.confirm.confirm-text"](): string;
     /**
-      * `Are you sure you want to resume the subscription for AFFiNE AI? This means your payment method will be charged automatically at the end of each billing cycle, starting from the next billing cycle.`
+      * `Are you sure you want to resume the subscription for LexiorGPT? This means your payment method will be charged automatically at the end of each billing cycle, starting from the next billing cycle.`
       */
     ["com.affine.payment.ai.action.resume.confirm.description"](): string;
     /**
@@ -3515,13 +3515,13 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.payment.ai.benefit.g3-3"](): string;
     /**
-      * `You have purchased AFFiNE AI. The expiration date is {{end}}.`
+      * `You have purchased LexiorGPT. The expiration date is {{end}}.`
       */
     ["com.affine.payment.ai.billing-tip.end-at"](options: {
         readonly end: string;
     }): string;
     /**
-      * `You have purchased AFFiNE AI. The next payment date is {{due}}.`
+      * `You have purchased LexiorGPT. The next payment date is {{due}}.`
       */
     ["com.affine.payment.ai.billing-tip.next-bill-at"](options: {
         readonly due: string;
@@ -3537,15 +3537,15 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.payment.ai.pricing-plan.caption-free"](): string;
     /**
-      * `You have purchased AFFiNE AI`
+      * `You have purchased LexiorGPT`
       */
     ["com.affine.payment.ai.pricing-plan.caption-purchased"](): string;
     /**
-      * `Learn about AFFiNE AI`
+      * `Learn about LexiorGPT`
       */
     ["com.affine.payment.ai.pricing-plan.learn"](): string;
     /**
-      * `AFFiNE AI`
+      * `LexiorGPT`
       */
     ["com.affine.payment.ai.pricing-plan.title"](): string;
     /**
@@ -3561,11 +3561,11 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.payment.ai.subscribe.billed-annually"](): string;
     /**
-      * `You have purchased AFFiNE AI.`
+      * `You have purchased LexiorGPT.`
       */
     ["com.affine.payment.ai.usage-description-purchased"](): string;
     /**
-      * `AFFiNE AI usage`
+      * `LexiorGPT usage`
       */
     ["com.affine.payment.ai.usage-title"](): string;
     /**
@@ -3636,7 +3636,7 @@ export function useAFFiNEI18N(): {
         readonly capacity: string;
     }): string;
     /**
-      * `AFFiNE AI`
+      * `LexiorGPT`
       */
     ["com.affine.payment.billing-setting.ai-plan"](): string;
     /**
@@ -3652,7 +3652,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.payment.billing-setting.believer.price-caption"](): string;
     /**
-      * `AFFiNE Cloud`
+      * `Lexior Cloud`
       */
     ["com.affine.payment.billing-setting.believer.title"](): string;
     /**
@@ -3668,7 +3668,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.payment.billing-setting.change-plan"](): string;
     /**
-      * `AFFiNE Cloud`
+      * `Lexior Cloud`
       */
     ["com.affine.payment.billing-setting.current-plan"](): string;
     /**
@@ -3762,7 +3762,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.payment.billing-setting.year"](): string;
     /**
-      * `Please tell us more about your use case, to make AFFiNE better.`
+      * `Please tell us more about your use case, to make Lexior Notebook better.`
       */
     ["com.affine.payment.billing-type-form.description"](): string;
     /**
@@ -3856,7 +3856,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.payment.cloud.pricing-plan.select.caption"](): string;
     /**
-      * `Hosted by AFFiNE.Pro`
+      * `Hosted by Lexior Notebook.Pro`
       */
     ["com.affine.payment.cloud.pricing-plan.select.title"](): string;
     /**
@@ -3878,7 +3878,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.payment.cloud.pro.benefit.g1"](): string;
     /**
-      * `Everything in AFFiNE FOSS & Basic.`
+      * `Everything in Lexior Notebook FOSS & Basic.`
       */
     ["com.affine.payment.cloud.pro.benefit.g1-1"](): string;
     /**
@@ -3936,7 +3936,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.payment.cloud.team-workspace.benefit.g1"](): string;
     /**
-      * `Everything in AFFiNE Pro.`
+      * `Everything in Lexior Notebook Pro.`
       */
     ["com.affine.payment.cloud.team-workspace.benefit.g1-1"](): string;
     /**
@@ -4000,7 +4000,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.payment.downgrade"](): string;
     /**
-      * `We'd like to hear more about where we fall short, so that we can make AFFiNE better.`
+      * `We'd like to hear more about where we fall short, so that we can make Lexior Notebook better.`
       */
     ["com.affine.payment.downgraded-notify.content"](): string;
     /**
@@ -4044,7 +4044,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.payment.dynamic-benefit-5"](): string;
     /**
-      * `Everything in AFFiNE Pro`
+      * `Everything in Lexior Notebook Pro`
       */
     ["com.affine.payment.lifetime.benefit-1"](): string;
     /**
@@ -4058,7 +4058,7 @@ export function useAFFiNEI18N(): {
         readonly capacity: string;
     }): string;
     /**
-      * `Dedicated Discord support with AFFiNE makers`
+      * `Dedicated Discord support with Lexior Notebook makers`
       */
     ["com.affine.payment.lifetime.benefit-4"](): string;
     /**
@@ -4089,7 +4089,7 @@ export function useAFFiNEI18N(): {
         quota: string;
     }>): string;
     /**
-      * `Upgrade to AFFiNE Pro for expanded member capacity`
+      * `Upgrade to Lexior Notebook Pro for expanded member capacity`
       */
     ["com.affine.payment.member-limit.description.tips-for-free-plan"](): string;
     /**
@@ -4403,11 +4403,11 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.payment.modal.downgrade.cancel"](): string;
     /**
-      * `You can still use AFFiNE Cloud Pro until the end of this billing period :)`
+      * `You can still use Lexior Cloud Pro until the end of this billing period :)`
       */
     ["com.affine.payment.modal.downgrade.caption"](): string;
     /**
-      * `Keep AFFiNE Cloud Pro`
+      * `Keep Lexior Cloud Pro`
       */
     ["com.affine.payment.modal.downgrade.confirm"](): string;
     /**
@@ -4505,7 +4505,7 @@ export function useAFFiNEI18N(): {
         readonly plan: string;
     }): string;
     /**
-      * `This is the pricing plans of AFFiNE Cloud. You can sign up or sign in to your account first.`
+      * `This is the pricing plans of Lexior Cloud. You can sign up or sign in to your account first.`
       */
     ["com.affine.payment.subtitle-not-signed-in"](): string;
     /**
@@ -4539,7 +4539,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.payment.redeem-code"](): string;
     /**
-      * `We'd like to hear more about your use case, so that we can make AFFiNE better.`
+      * `We'd like to hear more about your use case, so that we can make Lexior Notebook better.`
       */
     ["com.affine.payment.upgrade-success-notify.content"](): string;
     /**
@@ -4559,7 +4559,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.payment.upgrade-success-notify.title"](): string;
     /**
-      * `Congratulations! Your AFFiNE account has been successfully upgraded to a Pro account.`
+      * `Congratulations! Your Lexior Notebook account has been successfully upgraded to a Pro account.`
       */
     ["com.affine.payment.upgrade-success-page.text"](): string;
     /**
@@ -4575,7 +4575,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.payment.license-success.title"](): string;
     /**
-      * `Thank you for purchasing the AFFiNE self-hosted license.`
+      * `Thank you for purchasing the Lexior Notebook self-hosted license.`
       */
     ["com.affine.payment.license-success.text-1"](): string;
     /**
@@ -4583,7 +4583,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.payment.license-success.hint"](): string;
     /**
-      * `Open AFFiNE`
+      * `Open Lexior Notebook`
       */
     ["com.affine.payment.license-success.open-affine"](): string;
     /**
@@ -4655,7 +4655,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.doc.analytics.paywall.open-pricing"](): string;
     /**
-      * `Doc analytics over 7 days require an AFFiNE Team subscription.`
+      * `Doc analytics over 7 days require an Lexior Notebook Team subscription.`
       */
     ["com.affine.doc.analytics.paywall.toast"](): string;
     /**
@@ -5083,7 +5083,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.setting.account.message"](): string;
     /**
-      * `Sync with AFFiNE Cloud`
+      * `Sync with Lexior Cloud`
       */
     ["com.affine.setting.sign.message"](): string;
     /**
@@ -5135,7 +5135,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.setting.appearance.links"](): string;
     /**
-      * `Open AFFiNE links`
+      * `Open Lexior Notebook links`
       */
     ["com.affine.setting.appearance.open-in-app"](): string;
     /**
@@ -5155,11 +5155,11 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.setting.appearance.open-in-app.open-in-web"](): string;
     /**
-      * `Open AFFiNE links`
+      * `Open Lexior Notebook links`
       */
     ["com.affine.setting.appearance.open-in-app.title"](): string;
     /**
-      * `Open this doc in AFFiNE app`
+      * `Open this doc in Lexior Notebook app`
       */
     ["com.affine.open-in-app.card.title"](): string;
     /**
@@ -5443,7 +5443,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.editorSettings.general"](): string;
     /**
-      * `Enable the powerful AI assistant, AFFiNE AI.`
+      * `Enable the powerful AI assistant, LexiorGPT.`
       */
     ["com.affine.settings.editorSettings.general.ai.description"](): string;
     /**
@@ -5471,7 +5471,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.editorSettings.general.ai.enable.title"](): string;
     /**
-      * `AFFiNE AI`
+      * `LexiorGPT`
       */
     ["com.affine.settings.editorSettings.general.ai.title"](): string;
     /**
@@ -5683,7 +5683,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.email.action.verify"](): string;
     /**
-      * `Enable AFFiNE Cloud to collaborate with others`
+      * `Enable Lexior Cloud to collaborate with others`
       */
     ["com.affine.settings.member-tooltip"](): string;
     /**
@@ -5872,7 +5872,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.meetings.record.permission-modal.title"](): string;
     /**
-      * `AFFiNE will generate meeting notes by recording your meetings. Authorization to "Screen & System Audio Recording" is necessary.`
+      * `Lexior Notebook will generate meeting notes by recording your meetings. Authorization to "Screen & System Audio Recording" is necessary.`
       */
     ["com.affine.settings.meetings.record.permission-modal.description"](): string;
     /**
@@ -6152,7 +6152,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.workspace.experimental-features.enable-meetings.name"](): string;
     /**
-      * `Meetings allows you to record and transcribe meetings. Don't forget to enable it in AFFiNE settings.`
+      * `Meetings allows you to record and transcribe meetings. Don't forget to enable it in Lexior Notebook settings.`
       */
     ["com.affine.settings.workspace.experimental-features.enable-meetings.description"](): string;
     /**
@@ -6414,7 +6414,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.workspace.state.local"](): string;
     /**
-      * `Sync with AFFiNE Cloud`
+      * `Sync with Lexior Cloud`
       */
     ["com.affine.settings.workspace.state.sync-affine-cloud"](): string;
     /**
@@ -6490,7 +6490,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.workspace.storage.subtitle"](): string;
     /**
-      * `Enable AFFiNE Cloud to publish this workspace`
+      * `Enable Lexior Cloud to publish this workspace`
       */
     ["com.affine.settings.workspace.publish-tooltip"](): string;
     /**
@@ -6514,15 +6514,15 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.workspace.sharing.workspace-sharing.title"](): string;
     /**
-      * `AFFiNE AI`
+      * `LexiorGPT`
       */
     ["com.affine.settings.workspace.affine-ai.title"](): string;
     /**
-      * `Allow AFFiNE AI Assistant`
+      * `Allow LexiorGPT Assistant`
       */
     ["com.affine.settings.workspace.affine-ai.label"](): string;
     /**
-      * `Allow workspace members to use AFFiNE AI features. This setting doesn't affect billing. Workspace members use AFFiNE AI through their personal accounts.`
+      * `Allow workspace members to use LexiorGPT features. This setting doesn't affect billing. Workspace members use LexiorGPT through their personal accounts.`
       */
     ["com.affine.settings.workspace.affine-ai.description"](): string;
     /**
@@ -6573,7 +6573,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.workspace.indexer-embedding.title"](): string;
     /**
-      * `Manage AFFiNE indexing and AFFiNE AI Embedding for local content processing`
+      * `Manage Lexior Notebook indexing and LexiorGPT Embedding for local content processing`
       */
     ["com.affine.settings.workspace.indexer-embedding.description"](): string;
     /**
@@ -6661,7 +6661,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.workspace.indexer-embedding.embedding.additional-attachments.remove-attachment.tooltip"](): string;
     /**
-      * `Sharing doc requires AFFiNE Cloud.`
+      * `Sharing doc requires Lexior Cloud.`
       */
     ["com.affine.share-menu.EnableCloudDescription"](): string;
     /**
@@ -6930,7 +6930,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.share-page.footer.create-with"](): string;
     /**
-      * `Empower your sharing with AFFiNE Cloud: One-click doc sharing`
+      * `Empower your sharing with Lexior Cloud: One-click doc sharing`
       */
     ["com.affine.share-page.footer.description"](): string;
     /**
@@ -7014,7 +7014,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.storage.plan"](): string;
     /**
-      * `AFFiNE Cloud storage`
+      * `Lexior Cloud storage`
       */
     ["com.affine.storage.title"](): string;
     /**
@@ -7258,7 +7258,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.upgrade.tips.error"](): string;
     /**
-      * `To ensure compatibility with the updated AFFiNE client, please upgrade your data by clicking the "Upgrade workspace data" button below.`
+      * `To ensure compatibility with the updated Lexior Notebook client, please upgrade your data by clicking the "Upgrade workspace data" button below.`
       */
     ["com.affine.upgrade.tips.normal"](): string;
     /**
@@ -7342,7 +7342,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.workspace.cloud.auth"](): string;
     /**
-      * `Sync with AFFiNE Cloud`
+      * `Sync with Lexior Cloud`
       */
     ["com.affine.workspace.cloud.description"](): string;
     /**
@@ -8160,15 +8160,15 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.integration.web-clipper.name"](): string;
     /**
-      * `Import web pages to AFFiNE`
+      * `Import web pages to Lexior Notebook`
       */
     ["com.affine.integration.web-clipper.desc"](): string;
     /**
-      * `Elevate your AFFiNE experience with diverse add-ons and seamless integrations.`
+      * `Elevate your Lexior Notebook experience with diverse add-ons and seamless integrations.`
       */
     ["com.affine.integration.setting.description"](): string;
     /**
-      * `Learn how to develop a integration for AFFiNE`
+      * `Learn how to develop a integration for Lexior Notebook`
       */
     ["com.affine.integration.setting.learn"](): string;
     /**
@@ -8176,7 +8176,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.integration.readwise.name"](): string;
     /**
-      * `Manually import your content to AFFiNE from Readwise`
+      * `Manually import your content to Lexior Notebook from Readwise`
       */
     ["com.affine.integration.readwise.desc"](): string;
     /**
@@ -8216,7 +8216,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.integration.readwise.disconnect.title"](): string;
     /**
-      * `Once disconnected, content will no longer be imported. Do you want to keep your existing highlights in AFFiNE?`
+      * `Once disconnected, content will no longer be imported. Do you want to keep your existing highlights in Lexior Notebook?`
       */
     ["com.affine.integration.readwise.disconnect.desc"](): string;
     /**
@@ -8290,11 +8290,11 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.integration.readwise.setting.caption"](): string;
     /**
-      * `New Readwise highlights will be imported to AFFiNE `
+      * `New Readwise highlights will be imported to Lexior Notebook `
       */
     ["com.affine.integration.readwise.setting.sync-new-name"](): string;
     /**
-      * `New highlights in Readwise will be synced to AFFiNE `
+      * `New highlights in Readwise will be synced to Lexior Notebook `
       */
     ["com.affine.integration.readwise.setting.sync-new-desc"](): string;
     /**
@@ -8370,7 +8370,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.integration.calendar.name"](): string;
     /**
-      * `New events will be scheduled in AFFiNE’s journal`
+      * `New events will be scheduled in Lexior Notebook’s journal`
       */
     ["com.affine.integration.calendar.desc"](): string;
     /**
@@ -8514,7 +8514,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.integration.calendar.show-events"](): string;
     /**
-      * `Enabling this setting allows you to connect your calendar events to your Journal in AFFiNE`
+      * `Enabling this setting allows you to connect your calendar events to your Journal in Lexior Notebook`
       */
     ["com.affine.integration.calendar.show-events-desc"](): string;
     /**
@@ -8542,7 +8542,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.integration.mcp-server.name"](): string;
     /**
-      * `Enable other MCP Client to search and read the doc of AFFiNE.`
+      * `Enable other MCP Client to search and read the doc of Lexior Notebook.`
       */
     ["com.affine.integration.mcp-server.desc"](): string;
     /**
@@ -9433,7 +9433,7 @@ function createComponent(i18nKey: string) {
 }
 export const TypedTrans: {
     /**
-      * `Go to <a>{{link}}</a> for learn more details about AFFiNE AI.`
+      * `Go to <a>{{link}}</a> for learn more details about LexiorGPT.`
       */
     ["com.affine.ai-onboarding.general.5.description"]: ComponentType<TypedTransProps<{
         readonly link: string;
@@ -9447,13 +9447,13 @@ export const TypedTrans: {
         a: JSX.Element;
     }>>;
     /**
-      * `Opening <1>AFFiNE</1> app now`
+      * `Opening <1>Lexior Notebook</1> app now`
       */
     ["com.affine.auth.open.affine.prompt"]: ComponentType<TypedTransProps<Readonly<{}>, {
         ["1"]: JSX.Element;
     }>>;
     /**
-      * `This doc is now opened in <1>AFFiNE</1> app`
+      * `This doc is now opened in <1>Lexior Notebook</1> app`
       */
     ["com.affine.auth.open.affine.open-doc-prompt"]: ComponentType<TypedTransProps<Readonly<{}>, {
         ["1"]: JSX.Element;
@@ -9473,20 +9473,20 @@ export const TypedTrans: {
         ["1"]: JSX.Element;
     }>>;
     /**
-      * `The Self-Hosted instance is not hosted or deployed by AFFiNE. Your data will be stored on these instances.  <1>Learn more about Self-Host details.</1>`
+      * `The Self-Hosted instance is not hosted or deployed by Lexior Notebook. Your data will be stored on these instances.  <1>Learn more about Self-Host details.</1>`
       */
     ["com.affine.auth.sign.add-selfhosted.description"]: ComponentType<TypedTransProps<Readonly<{}>, {
         ["1"]: JSX.Element;
     }>>;
     /**
-      * `By clicking “Continue with Google/Email” above, you acknowledge that you agree to AFFiNE's <1>Terms of Conditions</1> and <3>Privacy Policy</3>.`
+      * `By clicking “Continue with Google/Email” above, you acknowledge that you agree to Lexior Notebook's <1>Terms of Conditions</1> and <3>Privacy Policy</3>.`
       */
     ["com.affine.auth.sign.message"]: ComponentType<TypedTransProps<Readonly<{}>, {
         ["1"]: JSX.Element;
         ["3"]: JSX.Element;
     }>>;
     /**
-      * `This demo is limited. <1>Download the AFFiNE Client</1> for the latest features and Performance.`
+      * `This demo is limited. <1>Download the Lexior Notebook Client</1> for the latest features and Performance.`
       */
     ["com.affine.banner.content"]: ComponentType<TypedTransProps<Readonly<{}>, {
         ["1"]: JSX.Element;
@@ -9783,7 +9783,7 @@ export const TypedTrans: {
         li: JSX.Element;
     }>>;
     /**
-      * `Utilize the meeting notes and AI summarization features provided by AFFiNE. <1>Discuss more in the community</1>.`
+      * `Utilize the meeting notes and AI summarization features provided by Lexior Notebook. <1>Discuss more in the community</1>.`
       */
     ["com.affine.settings.meetings.enable.description"]: ComponentType<TypedTransProps<Readonly<{}>, {
         ["1"]: JSX.Element;
@@ -10028,7 +10028,7 @@ export const TypedTrans: {
         ["3"]: JSX.Element;
     }>>;
     /**
-      * `Import your Readwise highlights to AFFiNE. Please visit Readwise, <br />click <a>"Get Access Token"</a>, and paste the token below.`
+      * `Import your Readwise highlights to Lexior Notebook. Please visit Readwise, <br />click <a>"Get Access Token"</a>, and paste the token below.`
       */
     ["com.affine.integration.readwise.connect.desc"]: ComponentType<TypedTransProps<Readonly<{}>, {
         br: JSX.Element;

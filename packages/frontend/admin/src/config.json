@@ -362,6 +362,10 @@
       "type": "Object",
       "desc": "The config for the morph provider."
     },
+    "providers.ollama": {
+      "type": "Object",
+      "desc": "The config for the ollama provider."
+    },
     "unsplash": {
       "type": "Object",
       "desc": "The config for the unsplash key."

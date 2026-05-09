@@ -48,7 +48,7 @@ import { processImage } from '../../native';
 import { CopilotCronJobs } from './cron';
 import { PromptService } from './prompt/service';
 import { CopilotProviderFactory } from './providers/factory';
-import type { PromptMessage, StreamObject } from './providers/types';
+import { CopilotProviderType, type PromptMessage, type StreamObject } from './providers/types';
 import { ChatSessionService } from './session';
 import { CopilotStorage } from './storage';
 import { type ChatHistory, type ChatMessage, SubmittedMessage } from './types';
@@ -441,9 +441,33 @@ export class CopilotResolver {
         .map(id => ({ id, name: this.modelNames.get(id) }))
         .filter(m => !!m.name) as CopilotModelType[];
     };
+    
+    const optionalModels = [...prompt.optionalModels];
     const proModels = prompt.config?.proModels || [];
+    
+    const ollamaProviders = this.providerFactory.getProvidersByType(CopilotProviderType.Ollama);
+    console.log('[resolver:models] Ollama Providers count:', ollamaProviders.length);
+    for (const p of ollamaProviders) {
+      if (p.configured()) {
+        if (p.models.length === 0) {
+          try {
+            await p.refreshOnlineModels();
+          } catch (e) {
+            console.error('[resolver:models] error refreshing models:', e);
+          }
+        }
+        console.log('[resolver:models] Ollama provider models:', p.models.map(m => m.id));
+        for (const m of p.models) {
+          if (!optionalModels.includes(m.id)) {
+            optionalModels.push(m.id);
+          }
+          if (m.name) this.modelNames.set(m.id, m.name);
+        }
+      }
+    }
+
     const missing = new Set(
-      [...prompt.optionalModels, ...proModels].filter(
+      [...optionalModels, ...proModels].filter(
         id => !this.modelNames.has(id)
       )
     );
@@ -461,7 +485,7 @@ export class CopilotResolver {
 
     return {
       defaultModel: prompt.model,
-      optionalModels: convertModels(prompt.optionalModels),
+      optionalModels: convertModels(optionalModels),
       proModels: convertModels(proModels),
     };
   }

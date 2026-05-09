@@ -22,6 +22,7 @@ import { ToolFailedCard } from '../components/ai-tools/tool-failed-card';
 import { ToolResultCard } from '../components/ai-tools/tool-result-card';
 import { WebCrawlTool } from '../components/ai-tools/web-crawl';
 import { WebSearchTool } from '../components/ai-tools/web-search';
+import { LegalSearchTool } from '../components/ai-tools/legal-search';
 import { TextRenderer } from '../components/text-renderer';
 import { AIErrorWrapper } from '../messages/error';
 import { AISlidesRenderer } from '../messages/slides-renderer';
@@ -51,6 +52,7 @@ const sharedElements = {
   'doc-write-tool': DocWriteTool,
   'web-crawl-tool': WebCrawlTool,
   'web-search-tool': WebSearchTool,
+  'legal-search-tool': LegalSearchTool,
   'section-edit-tool': SectionEditTool,
   'doc-compose-tool': DocComposeTool,
   'code-artifact-tool': CodeArtifactTool,

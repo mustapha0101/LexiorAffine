@@ -6,6 +6,8 @@ import { WorkspaceServerService, DefaultServerService } from '../../cloud';
 import { FetchService } from '../../cloud/services/fetch';
 import { WorkspaceService } from '../../workspace';
 import { Text } from '@blocksuite/store';
+import { getStoreManager } from '@affine/core/blocksuite/manager/store';
+import { MarkdownTransformer } from '@blocksuite/affine/widgets/linked-doc';
 
 const submitDocumentIracMutation = `
   mutation submitDocumentIrac($workspaceId: String!, $blobId: String!, $type: String) {
@@ -235,7 +237,7 @@ export class IracAttachmentService implements BlockSuiteIracService {
 
       if (result) {
         // 4. Append to blocksuite doc
-        this.fillIracResult(model, result, type);
+        await this.fillIracResult(model, result, type);
         this.setStatus(model.id, 'finished');
       } else {
           throw new Error('No result returned from claim check: ' + JSON.stringify(claimJson?.errors || claimJson));
@@ -274,7 +276,7 @@ export class IracAttachmentService implements BlockSuiteIracService {
     );
   }
 
-  private fillIracResult(model: AttachmentBlockModel, result: any, type: string) {
+  private async fillIracResult(model: AttachmentBlockModel, result: any, type: string) {
     const store = model.store || (model as any).doc;
     
     // Attachment blocks in BlockSuite can't hold Callout blocks directly! 
@@ -286,15 +288,19 @@ export class IracAttachmentService implements BlockSuiteIracService {
     );
     const parentId = transcriptionBlockId; // Attach as child to the transcription block!
     
-    const fill = () => {
+    const fill = async () => {
         try {
             if (type === 'summary') {
                 const calloutId = this.addCalloutBlock(store, '📑', 'Résumé', parentId);
                 // Insert the conclusion containing markdown summary
-                if (result.conclusion) {
-                    this.addParagraph(store, result.conclusion, calloutId);
-                } else if (result.rawResponse) {
-                    this.addParagraph(store, result.rawResponse, calloutId);
+                const markdownContent = result.conclusion || result.rawResponse;
+                if (markdownContent) {
+                    await MarkdownTransformer.importMarkdownToBlock({
+                      doc: store,
+                      blockId: calloutId,
+                      markdown: markdownContent,
+                      extensions: getStoreManager().config.init().value.get('store'),
+                    });
                 }
             } else {
                 const calloutId = this.addCalloutBlock(store, '⚖️', 'Analyse Juridique IRAC (Générée)', parentId);
@@ -322,6 +328,6 @@ export class IracAttachmentService implements BlockSuiteIracService {
         }
     };
 
-    fill();
+    await fill();
   }
 }

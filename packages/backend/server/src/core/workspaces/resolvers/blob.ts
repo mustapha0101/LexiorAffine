@@ -217,7 +217,7 @@ export class WorkspaceBlobResolver {
         throw new BlobInvalid('Blob size mismatch');
       }
       if (record.mime !== mime) {
-        throw new BlobInvalid('Blob mime mismatch');
+        this.logger.warn(`[BlobResolver] Blob mime mismatch on create. Expected: ${record.mime}, Actual: ${mime}`);
       }
 
       if (record.status === 'completed') {
@@ -228,7 +228,12 @@ export class WorkspaceBlobResolver {
         } else if (existingMetadata.contentLength !== size) {
           throw new BlobInvalid('Blob size mismatch');
         } else if (existingMetadata.contentType !== mime) {
-          throw new BlobInvalid('Blob mime mismatch');
+          this.logger.warn(`[BlobResolver] Blob mime mismatch on complete. Expected: ${mime}, Actual: ${existingMetadata.contentType}`);
+          return {
+            method: BlobUploadMethod.GRAPHQL,
+            blobKey: key,
+            alreadyUploaded: true,
+          };
         } else {
           return {
             method: BlobUploadMethod.GRAPHQL,

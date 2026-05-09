@@ -14,6 +14,9 @@ import { DocReader, DocWriter } from '../../../core/doc';
 import { AccessController } from '../../../core/permission';
 import { Models } from '../../../models';
 import { IndexerService } from '../../indexer';
+import { WorkspaceBlobStorage } from '../../../core/storage';
+import { readBufferWithLimit, OneMB } from '../../../base';
+import { readAllBlocksFromDocSnapshot } from '../../../core/utils/blocksuite';
 import type { ProviderMiddlewareConfig } from '../config';
 import { CopilotContextService } from '../context/service';
 import { PromptService } from '../prompt/service';
@@ -35,6 +38,7 @@ import {
   createDocCreateTool,
   createDocEditTool,
   createDocKeywordSearchTool,
+  createDocAnalyzeAttachmentsTool,
   createDocReadTool,
   createDocSemanticSearchTool,
   createDocUpdateMetaTool,
@@ -42,6 +46,13 @@ import {
   createExaCrawlTool,
   createExaSearchTool,
   createSectionEditTool,
+  createCanliiSearchCasesTool,
+  createCanliiGetCaseMetadataTool,
+  createCanliiSearchLegislationTool,
+  createCanliiLegislationMetadataTool,
+  createA2ajCoverageTool,
+  createA2ajFetchDocumentTool,
+  createA2ajSearchLegalDocumentsTool,
 } from '../tools';
 import { canonicalizePromptAttachment } from './attachments';
 import { CopilotProviderFactory } from './factory';
@@ -397,6 +408,7 @@ export abstract class CopilotProvider<C = any> {
       const docReader = this.moduleRef.get(DocReader, { strict: false });
       const docWriter = this.moduleRef.get(DocWriter, { strict: false });
       const models = this.moduleRef.get(Models, { strict: false });
+      const workspaceStorage = this.moduleRef.get(WorkspaceBlobStorage, { strict: false });
       const prompt = this.moduleRef.get(PromptService, {
         strict: false,
       });
@@ -445,6 +457,37 @@ export abstract class CopilotProvider<C = any> {
               this.factory,
               prompt,
               getDocContent.bind(null, options)
+            );
+            break;
+          }
+          case 'docAnalyzeAttachments': {
+            const getDocBlocks = async (docId: string) => {
+              const workspace = options.workspace;
+              if (!workspace) return [];
+              const docRecord = await docReader.getDoc(workspace, docId);
+              if (!docRecord) return [];
+              const result = await readAllBlocksFromDocSnapshot(docId, docRecord.bin);
+              return result.blocks;
+            };
+            const getBlobContent = async (blobId: string) => {
+              const workspace = options.workspace;
+              if (!workspace) return undefined;
+              return models.copilotWorkspace.getBlobContent(workspace, blobId);
+            };
+            const getBlobRaw = async (blobId: string) => {
+              const workspace = options.workspace;
+              if (!workspace || !workspaceStorage) return undefined;
+              const { body } = await workspaceStorage.get(workspace, blobId);
+              if (!body) return undefined;
+              const buffer = await readBufferWithLimit(body as any, 50 * OneMB);
+              return buffer;
+            };
+            tools.doc_analyze_attachments = createDocAnalyzeAttachmentsTool(
+              getDocBlocks,
+              getBlobContent,
+              getBlobRaw,
+              this.factory,
+              model
             );
             break;
           }
@@ -508,6 +551,19 @@ export abstract class CopilotProvider<C = any> {
           case 'webSearch': {
             tools.web_search_exa = createExaSearchTool(this.AFFiNEConfig);
             tools.web_crawl_exa = createExaCrawlTool(this.AFFiNEConfig);
+            break;
+          }
+          case 'canliiSearch': {
+            tools.canlii_search_cases = createCanliiSearchCasesTool();
+            tools.canlii_get_case_metadata = createCanliiGetCaseMetadataTool();
+            tools.canlii_search_legislation = createCanliiSearchLegislationTool();
+            tools.canlii_get_legislation_metadata = createCanliiLegislationMetadataTool();
+            break;
+          }
+          case 'a2ajSearch': {
+            tools.a2aj_coverage = createA2ajCoverageTool();
+            tools.a2aj_fetch_document = createA2ajFetchDocumentTool();
+            tools.a2aj_search_legal_documents = createA2ajSearchLegalDocumentsTool();
             break;
           }
           case 'docCompose': {

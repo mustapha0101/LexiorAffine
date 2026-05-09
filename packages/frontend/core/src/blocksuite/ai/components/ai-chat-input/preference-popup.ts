@@ -216,6 +216,32 @@ export class ChatInputPreference extends SignalWatcher(
       })
     );
 
+    searchItems.push(
+      menu.toggleSwitch({
+        name: 'Recherche Juridique CanLII',
+        prefix: AiOutlineIcon(),
+        on: !!this.toolsConfigService.config.value.canliiSearch,
+        onChange: (value: boolean) =>
+          this.toolsConfigService.setConfig({
+            canliiSearch: value,
+          }),
+        class: { 'preference-action': true },
+      })
+    );
+
+    searchItems.push(
+      menu.toggleSwitch({
+        name: 'Recherche Juridique A2AJ',
+        prefix: AiOutlineIcon(),
+        on: !!this.toolsConfigService.config.value.a2ajSearch,
+        onChange: (value: boolean) =>
+          this.toolsConfigService.setConfig({
+            a2ajSearch: value,
+          }),
+        class: { 'preference-action': true },
+      })
+    );
+
     popMenu(popupTargetFromElement(element), {
       options: {
         items: [

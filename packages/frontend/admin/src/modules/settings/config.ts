@@ -156,6 +156,7 @@ export const KNOWN_CONFIG_GROUPS = [
       'providers.perplexity',
       'providers.anthropic',
       'providers.fal',
+      'providers.ollama',
       'unsplash',
       'exa',
       {

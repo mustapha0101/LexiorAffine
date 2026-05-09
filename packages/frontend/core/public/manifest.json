@@ -1,7 +1,7 @@
 {
-  "name": "AFFiNE: There can be more than Notion and Miro.",
-  "short_name": "AFFiNE",
-  "description": "AFFiNE is a workspace with fully merged docs, whiteboards and databases. Get more things done, your creativity isn’t monotone.",
+  "name": "Lexior GPT: The Legal Workspace",
+  "short_name": "Lexior GPT",
+  "description": "Lexior GPT is a sophisticated AI-powered legal workspace.",
   "start_url": "/?source=pwa",
   "background_color": "#ffffff",
   "display": "standalone",

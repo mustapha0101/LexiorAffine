@@ -90,7 +90,14 @@ export const registerHandlers = () => {
 
   ipcMain.handle(AFFINE_API_CHANNEL_NAME, async (e, ...args: any[]) => {
     try {
-      return await handleIpcMessage(e, ...args);
+      const result = await handleIpcMessage(e, ...args);
+      try {
+        // Test if the object is cloneable
+        structuredClone(result);
+      } catch (cloneErr) {
+        logger.error(`Error cloning result of ipc handler ${args[0]}:`, cloneErr);
+      }
+      return result;
     } catch (error) {
       logger.error(`error in ipc handler when calling ${args[0]}`, error);
       return null;

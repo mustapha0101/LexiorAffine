@@ -216,8 +216,48 @@ export const RootAppSidebar = memo((): ReactElement => {
 
   return (
     <AppSidebar>
+      <style>{`
+        [data-testid="app-sidebar"],
+        [data-testid="app-sidebar"] .sidebar-container,
+        [data-testid="app-sidebar"] .sidebar-scrollable-container,
+        [data-testid="app-sidebar"] > div {
+          --affine-background-primary-color: #0f172a !important;
+          --affine-background-secondary-color: #0f172a !important;
+          --affine-hover-color: rgba(255, 255, 255, 0.1) !important;
+          --affine-hover-color-filled: rgba(255, 255, 255, 0.1) !important;
+          --affine-text-primary-color: #f8fafc !important;
+          --affine-text-secondary-color: #e2e8f0 !important;
+          --affine-icon-color: #f8fafc !important;
+          --affine-border-color: #1e293b !important;
+          background-color: #0f172a !important;
+          color: #f8fafc !important;
+        }
+        [data-testid="app-sidebar"] span:not([style*="background-color"]), 
+        [data-testid="app-sidebar"] div:not([style*="background-color"]),
+        [data-testid="app-sidebar"] svg {
+          color: #f8fafc !important;
+        }
+        [data-testid="app-sidebar"] .menu-item:hover,
+        [data-testid="app-sidebar"] .menu-link-item:hover {
+          background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        [data-testid="sidebar-new-page-button"],
+        [data-testid="sidebar-new-page-with-ask-button"] {
+          background-color: #c49b3b !important;
+          border: 1px solid #c49b3b !important;
+        }
+        [data-testid="sidebar-new-page-button"] svg,
+        [data-testid="sidebar-new-page-with-ask-button"] svg {
+          color: #ffffff !important;
+        }
+      `}</style>
       <SidebarContainer>
-        <div className={workspaceAndUserWrapper}>
+        <div style={{ position: 'absolute', top: '16px', right: '20px', zIndex: 50, pointerEvents: 'none' }}>
+          <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '16px', fontWeight: 800, color: '#c49b3b', letterSpacing: '0.5px' }}>
+            Lexior<span style={{ fontWeight: 400, color: '#f8fafc' }}>Notebook</span>
+          </div>
+        </div>
+        <div className={workspaceAndUserWrapper} style={{ marginTop: '24px' }}>
           <div className={workspaceWrapper}>
             <WorkspaceNavigator
               showEnableCloudButton

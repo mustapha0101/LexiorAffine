@@ -16,6 +16,7 @@ export const sharedEffectElementTags = [
   'doc-write-tool',
   'web-crawl-tool',
   'web-search-tool',
+  'legal-search-tool',
   'section-edit-tool',
   'doc-compose-tool',
   'code-artifact-tool',

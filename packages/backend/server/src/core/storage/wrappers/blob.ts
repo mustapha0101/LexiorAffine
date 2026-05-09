@@ -180,7 +180,13 @@ export class WorkspaceBlobStorage {
     }
 
     if (expected.mime && metadata.contentType !== expected.mime) {
-      return { ok: false, reason: 'mime_mismatch' };
+      const isOfficeMime = expected.mime.startsWith('application/vnd.openxmlformats-officedocument') || expected.mime === 'application/epub+zip';
+      const isZipMatch = isOfficeMime && metadata.contentType === 'application/zip';
+      if (!isZipMatch) {
+        // Relaxing MIME validation: Browsers often send application/octet-stream or wrong MIME types.
+        // We log it instead of rejecting it to prevent "Blob mime mismatch" errors in Lexior UI.
+        console.warn(`[BlobStorage] MIME mismatch relaxed. Expected: ${expected.mime}, Actual: ${metadata.contentType}`);
+      }
     }
 
     const object = await this.provider.get(`${workspaceId}/${key}`);

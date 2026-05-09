@@ -450,11 +450,16 @@ CONTRAINTES STRICTES :
 
   return (
     <>
+      <style>{`
+        [data-testid="cabinet-view-body"] {
+          background-color: #fdfbf7 !important;
+        }
+      `}</style>
       <ViewTitle title="Dossier Client" />
       <ViewHeader>
-        <div style={{ padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+        <div style={{ padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', backgroundColor: '#fdfbf7' }}>
           <div>
-            <div style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.5px' }}>Dossier Client</div>
+            <div style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.5px', fontFamily: "'Playfair Display', Georgia, serif" }}>Dossier Client</div>
             <div style={{ fontSize: 14, color: 'var(--affine-text-secondary-color)', marginTop: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--affine-primary-color)' }}></span>
               Phase : Mise en état
@@ -469,12 +474,13 @@ CONTRAINTES STRICTES :
                 alert('La fonction d\'exportation n\'est pas disponible pour le moment.');
               }
             }}
+            style={{ backgroundColor: '#c49b3b', color: '#fff', borderColor: '#c49b3b' }}
           >
             💾 Exporter en Modèle
           </Button>
         </div>
       </ViewHeader>
-      <ViewBody>
+      <ViewBody data-testid="cabinet-view-body">
         <style>{`
           .dashboard-grid {
             display: grid;
@@ -485,15 +491,15 @@ CONTRAINTES STRICTES :
             box-sizing: border-box;
           }
           .premium-card {
-            background: var(--affine-background-primary-color);
+            background: #ffffff;
             border: 1px solid var(--affine-border-color);
             border-radius: 16px;
             padding: 24px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
           }
           .ai-brief-card {
-            background: linear-gradient(145deg, var(--affine-background-primary-color), var(--affine-background-secondary-color));
-            border-left: 4px solid #8b5cf6;
+            background: linear-gradient(145deg, #ffffff, #fdfbf7);
+            border-left: 4px solid #c49b3b;
             position: relative;
             overflow: hidden;
           }
@@ -644,7 +650,7 @@ CONTRAINTES STRICTES :
           }
         `}</style>
         
-        <div style={{ width: '100%', height: '100%', overflowY: 'auto', paddingBottom: '40px', boxSizing: 'border-box' }}>
+        <div style={{ width: '100%', height: '100%', overflowY: 'auto', paddingBottom: '40px', boxSizing: 'border-box', backgroundColor: '#fdfbf7' }}>
           <div className="dashboard-grid">
           {/* Colonne Principale */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -652,10 +658,10 @@ CONTRAINTES STRICTES :
             {/* AI Briefing */}
             <div className="premium-card ai-brief-card">
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#8b5cf6', fontWeight: 700 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#c49b3b', fontWeight: 700, fontFamily: "'Playfair Display', Georgia, serif", fontSize: '20px' }}>
                   <AiIcon /> Intelligence Lexior
                 </div>
-                <Button onClick={generateSmartBrief} disabled={isGeneratingBrief} style={{ borderColor: '#8b5cf6', color: '#8b5cf6', background: 'rgba(139,92,246,0.1)', cursor: isGeneratingBrief ? 'default' : 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Button onClick={generateSmartBrief} disabled={isGeneratingBrief} style={{ borderColor: '#c49b3b', color: '#c49b3b', background: 'rgba(196,155,59,0.1)', cursor: isGeneratingBrief ? 'default' : 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <AiIcon /> {isGeneratingBrief ? "Analyse en cours..." : "Générer un Brief IA"}
                 </Button>
               </div>
@@ -673,10 +679,10 @@ CONTRAINTES STRICTES :
             {/* Ligne de Vie (Timeline) - MUI Alternating Style */}
             <div className="premium-card">
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-                <h3 style={{ margin: 0, fontSize: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <h3 style={{ margin: 0, fontSize: 18, display: 'flex', alignItems: 'center', gap: 8, fontFamily: "'Playfair Display', Georgia, serif" }}>
                   ⏳ Chronologie Intelligente (IA)
                 </h3>
-                <Button onClick={extractTimelineEvents} disabled={isExtractingTimeline} style={{ borderColor: '#8b5cf6', color: '#8b5cf6', background: 'rgba(139,92,246,0.1)', cursor: isExtractingTimeline ? 'default' : 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Button onClick={extractTimelineEvents} disabled={isExtractingTimeline} style={{ borderColor: '#c49b3b', color: '#c49b3b', background: 'rgba(196,155,59,0.1)', cursor: isExtractingTimeline ? 'default' : 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <AiIcon /> {isExtractingTimeline ? `Analyse... ${extractionProgress}%` : "Actualiser"}
                 </Button>
               </div>
@@ -735,9 +741,9 @@ CONTRAINTES STRICTES :
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             
             {/* Pilier 1 : Urgences */}
-            <div className="pillar-card" style={{ borderColor: 'rgba(239, 68, 68, 0.2)', backgroundColor: 'rgba(239, 68, 68, 0.02)' }}>
-              <div className="pillar-header" style={{ color: '#ef4444' }}>
-                <span style={{ fontSize: 16 }}>🔥</span> À Faire (Urgences)
+            <div className="pillar-card" style={{ borderColor: 'rgba(114, 47, 55, 0.2)', backgroundColor: 'rgba(114, 47, 55, 0.02)' }}>
+              <div className="pillar-header" style={{ color: '#722f37', fontFamily: "'Playfair Display', Georgia, serif" }}>
+                <span style={{ fontSize: 16 }}>📌</span> À Faire (Urgences)
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                 {urgences.length === 0 ? (
@@ -753,9 +759,9 @@ CONTRAINTES STRICTES :
             </div>
 
             {/* Pilier 2 : Pièces Maîtresses */}
-            <div className="pillar-card" style={{ borderColor: 'rgba(59, 130, 246, 0.2)', backgroundColor: 'rgba(59, 130, 246, 0.02)' }}>
-              <div className="pillar-header" style={{ color: '#3b82f6' }}>
-                <span style={{ fontSize: 16 }}>💎</span> Pièces Maîtresses
+            <div className="pillar-card" style={{ borderColor: 'rgba(26, 35, 126, 0.2)', backgroundColor: 'rgba(26, 35, 126, 0.02)' }}>
+              <div className="pillar-header" style={{ color: '#1a237e', fontFamily: "'Playfair Display', Georgia, serif" }}>
+                <span style={{ fontSize: 16 }}>⚖️</span> Pièces Maîtresses
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                 {piecesMaitresses.length === 0 ? (
@@ -771,8 +777,8 @@ CONTRAINTES STRICTES :
             </div>
 
             {/* Pilier 3 : Événements Prochains */}
-            <div className="pillar-card" style={{ borderColor: 'rgba(245, 158, 11, 0.2)', backgroundColor: 'rgba(245, 158, 11, 0.02)' }}>
-              <div className="pillar-header" style={{ color: '#f59e0b' }}>
+            <div className="pillar-card" style={{ borderColor: 'rgba(196, 155, 59, 0.2)', backgroundColor: 'rgba(196, 155, 59, 0.02)' }}>
+              <div className="pillar-header" style={{ color: '#c49b3b', fontFamily: "'Playfair Display', Georgia, serif" }}>
                 <span style={{ fontSize: 16 }}>📅</span> Événements Prochains
               </div>
               
@@ -804,12 +810,12 @@ CONTRAINTES STRICTES :
                 <input type="text" placeholder="Titre (ex: Audience)" value={newEventTitle} onChange={e => setNewEventTitle(e.target.value)} style={{ width: '100%', padding: '6px 8px', fontSize: 13, borderRadius: 4, border: '1px solid #e5e7eb', marginBottom: 6 }} />
                 <div style={{ display: 'flex', gap: 6 }}>
                   <input type="date" value={newEventDate} onChange={e => setNewEventDate(e.target.value)} style={{ flex: 1, padding: '6px 8px', fontSize: 13, borderRadius: 4, border: '1px solid #e5e7eb' }} />
-                  <Button onClick={handleCreateEvent} style={{ padding: '0 12px', background: '#f59e0b', color: 'white', border: 'none', cursor: 'pointer' }}>{editingEventId ? '✓' : '+'}</Button>
+                  <Button onClick={handleCreateEvent} style={{ padding: '0 12px', background: '#c49b3b', color: 'white', border: 'none', cursor: 'pointer' }}>{editingEventId ? '✓' : '+'}</Button>
                   {editingEventId && <Button onClick={() => { setEditingEventId(null); setNewEventTitle(""); setNewEventDate(""); }} style={{ padding: '0 12px', background: '#e5e7eb', color: '#6b7280', border: 'none', cursor: 'pointer' }}>✕</Button>}
                 </div>
               </div>
 
-              <Button style={{ width: '100%', marginTop: 12, backgroundColor: 'white', color: '#f59e0b', border: '1px solid #f59e0b', display: 'flex', justifyContent: 'center', cursor: 'pointer' }} onClick={() => {
+              <Button style={{ width: '100%', marginTop: 12, backgroundColor: '#fdfbf7', color: '#c49b3b', border: '1px solid #c49b3b', display: 'flex', justifyContent: 'center', cursor: 'pointer' }} onClick={() => {
                 viewService.view.activeSidebarTab('cabinet-journal');
                 workbench.openSidebar();
               }}>

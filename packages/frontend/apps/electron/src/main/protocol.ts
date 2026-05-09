@@ -265,7 +265,8 @@ export function registerProtocol() {
             ensureFrameAncestors(responseHeaders, "'self'");
           } else if (
             (protocol === 'http:' || protocol === 'https:') &&
-            affineDomains.some(regex => regex.test(hostname))
+            (affineDomains.some(regex => regex.test(hostname)) ||
+             (hostname === 'localhost' && new URL(url).port === '11434'))
           ) {
             allowCors(responseHeaders);
           }
@@ -309,6 +310,11 @@ export function registerProtocol() {
       );
       if (needReferer && !details.requestHeaders['Referer']) {
         details.requestHeaders['Referer'] = defaultReferer;
+      }
+
+      // Spoof Origin for Ollama to avoid CORS issues from assets://
+      if (hostname === 'localhost' && url.port === '11434') {
+        details.requestHeaders['Origin'] = 'http://localhost';
       }
     })()
       .catch(err => {

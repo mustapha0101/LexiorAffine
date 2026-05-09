@@ -78,6 +78,20 @@ export function getTools(
           });
         }
         break;
+      case 'canliiSearch':
+        if (value === true && !result.includes('canliiSearch')) {
+          result = [...result, 'canliiSearch'];
+        } else if (value === false) {
+          result = result.filter(tool => tool !== 'canliiSearch');
+        }
+        break;
+      case 'a2ajSearch':
+        if (value === true && !result.includes('a2ajSearch')) {
+          result = [...result, 'a2ajSearch'];
+        } else if (value === false) {
+          result = result.filter(tool => tool !== 'a2ajSearch');
+        }
+        break;
     }
   });
   return result;

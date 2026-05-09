@@ -193,6 +193,14 @@ export class CopilotProviderFactory {
     return this.getProvider({ modelId }, filter);
   }
 
+  getProvidersByType(type: CopilotProviderType): CopilotProvider[] {
+    const ids = this.#providerIdsByType.get(type);
+    if (!ids) return [];
+    return Array.from(ids)
+      .map(id => this.getBoundProvider(id, this.#providers.get(id)!))
+      .filter(Boolean) as CopilotProvider[];
+  }
+
   register(providerId: string, provider: CopilotProvider) {
     const existed = this.#providers.get(providerId);
     if (existed?.type && existed.type !== provider.type) {

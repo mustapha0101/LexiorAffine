@@ -64,7 +64,7 @@ export const DateValue = ({
     if (!page) return;
 
     setIsExtracting(true);
-    toast("Recherche de la date d'audience par l'IA...", { duration: 3000 });
+    toast("Recherche de la date importante par l'IA...", { duration: 3000 });
 
     try {
       const blocks = Object.values(page.blocks.value);
@@ -76,7 +76,7 @@ export const DateValue = ({
         return;
       }
 
-      const prompt = `Voici le texte d'un document juridique. Cherche la date de l'audience ou de la comparution mentionnée. Si tu la trouves, retourne-la UNIQUEMENT sous le format AAAA-MM-JJ. Si aucune date d'audience n'est présente, ne retourne rien. Texte: ${textContent.substring(0, 4000)}`;
+      const prompt = `Voici le texte d'un document juridique. Cherche la date de l'événement le plus important (audience, date limite, justificatif à fournir, échéance). Si tu la trouves, retourne-la UNIQUEMENT sous le format AAAA-MM-JJ. Si aucune date importante n'est présente, ne retourne rien. Texte: ${textContent.substring(0, 4000)}`;
 
       const response = await fetch('http://localhost:11434/api/generate', {
         method: 'POST',
@@ -92,9 +92,9 @@ export const DateValue = ({
 
       if (extractedDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
         onChange(extractedDate);
-        toast(`✓ Date extraite par l'IA : ${extractedDate}`);
+        toast(`✓ Date importante extraite par l'IA : ${extractedDate}`);
       } else {
-        toast("Aucune date d'audience trouvée.");
+        toast("Aucune date importante trouvée.");
       }
     } catch (e) {
       console.error(e);

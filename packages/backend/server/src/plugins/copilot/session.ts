@@ -129,8 +129,22 @@ export class ChatSession implements AsyncDisposable {
         models.includes(normalizeModel(modelId) ?? '')
       );
     };
-    const normalize = (m?: string) => {
+    const normalize = async (m?: string) => {
       if (inModelList(this.optionalModels, m)) return m;
+      
+      if (m) {
+        const factory = this.moduleRef.get(CopilotProviderFactory, { strict: false });
+        if (factory) {
+          const provider = await factory.getProviderByModel(m);
+          if (provider && provider.configured()) {
+            // Also ensure the provider's model list includes this model, or it's implicitly supported
+            if (provider.models.some(model => model.id === m || normalizeModel(model.id) === m)) {
+              return m;
+            }
+          }
+        }
+      }
+
       return defaultModel;
     };
     const isPro = (m?: string) => inModelList(this.proModels, m);
@@ -165,7 +179,7 @@ export class ChatSession implements AsyncDisposable {
       return defaultModel;
     }
 
-    const resolvedModel = normalize(requestedModelId);
+    const resolvedModel = await normalize(requestedModelId);
     if (!resolvedModel) {
       throw new CopilotSessionInvalidInput('Model is required');
     }

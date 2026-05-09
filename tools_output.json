@@ -1,0 +1,534 @@
+{"result":{"protocolVersion":"2024-11-05","capabilities":{"tools":{"listChanged":true}},"serverInfo":{"name":"CanLII MCP","version":"1.1.4","description":"Local MCP server for Canadian legal research via the CanLII API. Always include CanLII URLs in responses so the user can verify sources directly."}},"jsonrpc":"2.0","id":0}
+{"result":{"tools":[{"name":"search","description":"Search CanLII for cases, legislation, and commentary by keyword. This is the primary entry point for legal research. Returns case citations and titles ranked by relevance — does NOT include keywords, dates, or URLs. Call get_case_metadata on promising results to get full details before citing a case. Search is keyword-based, not semantic — use specific legal terms rather than natural language. Common terms: 'best interests of the child', 'material change in circumstances', 'standard of review', 'duty to consult', 'reasonable expectation of privacy'. Include jurisdiction to narrow results (e.g., 'Ontario', 'Alberta'). Date filters are NOT supported on search. Always cite the CanLII citation and provide the case URL so the user can verify the source.","inputSchema":{"type":"object","properties":{"query":{"type":"string","description":"Full-text search query. Can include case names, legal concepts, legislation references, or keywords."},"language":{"type":"string","enum":["en","fr"],"default":"en","description":"Language: 'en' for English (default), 'fr' for French"},"resultCount":{"type":"number","minimum":1,"maximum":100,"default":10,"description":"Number of results to return (1-100, default 10). Keep low for AI context efficiency."},"offset":{"type":"number","minimum":0,"default":0,"description":"Pagination offset (default 0). Use to page through results."}},"required":["query"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"},"execution":{"taskSupport":"forbidden"}},{"name":"get_courts_and_tribunals","description":"List all available court and tribunal databases in Canada. Returns database IDs needed for other tools. Key databases: onsc (Ontario Superior Court), onca (Ontario Court of Appeal), oncj (Ontario Court of Justice), onscdc (Divisional Court), csc-scc (Supreme Court of Canada), bcsc (BC Supreme Court), abkb (Alberta King's Bench). Use this to discover valid databaseId values for browse and citator tools.","inputSchema":{"type":"object","properties":{"language":{"type":"string","enum":["en","fr"],"default":"en","description":"Language: 'en' for English (default), 'fr' for French"},"publishedBefore":{"type":"string","pattern":"^\\d{4}-\\d{2}-\\d{2}$","description":"Date first published on CanLII (YYYY-MM-DD)"},"publishedAfter":{"$ref":"#/properties/publishedBefore","description":"Date first published on CanLII (YYYY-MM-DD)"},"modifiedBefore":{"$ref":"#/properties/publishedBefore","description":"Date content last modified on CanLII (YYYY-MM-DD)"},"modifiedAfter":{"$ref":"#/properties/publishedBefore","description":"Date content last modified on CanLII (YYYY-MM-DD)"},"changedBefore":{"$ref":"#/properties/publishedBefore","description":"Date metadata or content last changed on CanLII (YYYY-MM-DD)"},"changedAfter":{"$ref":"#/properties/publishedBefore","description":"Date metadata or content last changed on CanLII (YYYY-MM-DD)"},"decisionDateBefore":{"$ref":"#/properties/publishedBefore","description":"Decision date upper bound (YYYY-MM-DD)"},"decisionDateAfter":{"$ref":"#/properties/publishedBefore","description":"Decision date lower bound (YYYY-MM-DD)"}},"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"},"execution":{"taskSupport":"forbidden"}},{"name":"get_case_law_decisions","description":"List case law decisions from a specific court database. Use date filters to narrow results. Useful for browsing recent decisions from a specific court. Results are ordered by most recently added. Use get_case_metadata to get full details on a specific case.","inputSchema":{"type":"object","properties":{"language":{"type":"string","enum":["en","fr"],"default":"en","description":"Language: 'en' for English (default), 'fr' for French"},"databaseId":{"type":"string","pattern":"^[a-zA-Z0-9_\\-]{1,100}$","description":"Court database ID (e.g., 'onsc' for Ontario Superior Court, 'onca' for Ontario Court of Appeal, 'csc-scc' for Supreme Court of Canada)"},"offset":{"type":"number","default":0,"description":"Start position for results (default 0 = most recent)"},"resultCount":{"type":"number","maximum":10000,"default":20,"description":"Number of results to return (max 10,000, default 20)"},"publishedBefore":{"type":"string","pattern":"^\\d{4}-\\d{2}-\\d{2}$","description":"Date first published on CanLII (YYYY-MM-DD)"},"publishedAfter":{"$ref":"#/properties/publishedBefore","description":"Date first published on CanLII (YYYY-MM-DD)"},"modifiedBefore":{"$ref":"#/properties/publishedBefore","description":"Date content last modified on CanLII (YYYY-MM-DD)"},"modifiedAfter":{"$ref":"#/properties/publishedBefore","description":"Date content last modified on CanLII (YYYY-MM-DD)"},"changedBefore":{"$ref":"#/properties/publishedBefore","description":"Date metadata or content last changed on CanLII (YYYY-MM-DD)"},"changedAfter":{"$ref":"#/properties/publishedBefore","description":"Date metadata or content last changed on CanLII (YYYY-MM-DD)"},"decisionDateBefore":{"$ref":"#/properties/publishedBefore","description":"Decision date upper bound (YYYY-MM-DD)"},"decisionDateAfter":{"$ref":"#/properties/publishedBefore","description":"Decision date lower bound (YYYY-MM-DD)"}},"required":["databaseId"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"},"execution":{"taskSupport":"forbidden"}},{"name":"get_case_metadata","description":"Get detailed metadata for a specific case including its CanLII URL, citation, decision date, docket number, keywords, and topics. The URL field links directly to the full decision text on canlii.org — always provide this to the user for verification. Use after finding a case via search or browse to get complete details before citing it.","inputSchema":{"type":"object","properties":{"language":{"type":"string","enum":["en","fr"],"default":"en","description":"Language: 'en' for English (default), 'fr' for French"},"databaseId":{"type":"string","pattern":"^[a-zA-Z0-9_\\-]{1,100}$","description":"Court database ID (e.g., 'onsc', 'onca', 'csc-scc')"},"caseId":{"type":"string","pattern":"^[a-zA-Z0-9_\\-]{1,100}$","description":"Case unique identifier from search/browse results (e.g., '2021onsc8582')"},"publishedBefore":{"type":"string","pattern":"^\\d{4}-\\d{2}-\\d{2}$","description":"Date first published on CanLII (YYYY-MM-DD)"},"publishedAfter":{"$ref":"#/properties/publishedBefore","description":"Date first published on CanLII (YYYY-MM-DD)"},"modifiedBefore":{"$ref":"#/properties/publishedBefore","description":"Date content last modified on CanLII (YYYY-MM-DD)"},"modifiedAfter":{"$ref":"#/properties/publishedBefore","description":"Date content last modified on CanLII (YYYY-MM-DD)"},"changedBefore":{"$ref":"#/properties/publishedBefore","description":"Date metadata or content last changed on CanLII (YYYY-MM-DD)"},"changedAfter":{"$ref":"#/properties/publishedBefore","description":"Date metadata or content last changed on CanLII (YYYY-MM-DD)"},"decisionDateBefore":{"$ref":"#/properties/publishedBefore","description":"Decision date upper bound (YYYY-MM-DD)"},"decisionDateAfter":{"$ref":"#/properties/publishedBefore","description":"Decision date lower bound (YYYY-MM-DD)"}},"required":["databaseId","caseId"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"},"execution":{"taskSupport":"forbidden"}},{"name":"get_case_citator","description":"Look up citation relationships for a case. Critical for verifying if a case is still good law. Use 'citingCases' to see what later cases cite this decision — if many recent cases cite it approvingly, it is strong authority. Use 'citedCases' to see what authorities this case relied on. Use 'citedLegislations' to see what statutes the case references. Returns the full list of citing/cited items.","inputSchema":{"type":"object","properties":{"language":{"type":"string","enum":["en","fr"],"default":"en","description":"Language: 'en' for English (default), 'fr' for French"},"databaseId":{"type":"string","pattern":"^[a-zA-Z0-9_\\-]{1,100}$","description":"Court database ID (e.g., 'onsc', 'onca', 'csc-scc')"},"caseId":{"type":"string","pattern":"^[a-zA-Z0-9_\\-]{1,100}$","description":"Case unique identifier (e.g., '2021onsc8582')"},"metadataType":{"type":"string","enum":["citedCases","citingCases","citedLegislations"],"description":"'citingCases' = what later cases cite this one (check if still good law); 'citedCases' = what this case relies on; 'citedLegislations' = statutes referenced"},"publishedBefore":{"type":"string","pattern":"^\\d{4}-\\d{2}-\\d{2}$","description":"Date first published on CanLII (YYYY-MM-DD)"},"publishedAfter":{"$ref":"#/properties/publishedBefore","description":"Date first published on CanLII (YYYY-MM-DD)"},"modifiedBefore":{"$ref":"#/properties/publishedBefore","description":"Date content last modified on CanLII (YYYY-MM-DD)"},"modifiedAfter":{"$ref":"#/properties/publishedBefore","description":"Date content last modified on CanLII (YYYY-MM-DD)"},"changedBefore":{"$ref":"#/properties/publishedBefore","description":"Date metadata or content last changed on CanLII (YYYY-MM-DD)"},"changedAfter":{"$ref":"#/properties/publishedBefore","description":"Date metadata or content last changed on CanLII (YYYY-MM-DD)"},"decisionDateBefore":{"$ref":"#/properties/publishedBefore","description":"Decision date upper bound (YYYY-MM-DD)"},"decisionDateAfter":{"$ref":"#/properties/publishedBefore","description":"Decision date lower bound (YYYY-MM-DD)"}},"required":["databaseId","caseId","metadataType"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"},"execution":{"taskSupport":"forbidden"}},{"name":"get_case_citator_tease","description":"Quick preview of citation relationships (max 5 results). Faster than the full citator. Use this for a quick check on whether a case has been cited, then use get_case_citator for the complete list if needed.","inputSchema":{"type":"object","properties":{"language":{"type":"string","enum":["en","fr"],"default":"en","description":"Language: 'en' for English (default), 'fr' for French"},"databaseId":{"type":"string","pattern":"^[a-zA-Z0-9_\\-]{1,100}$","description":"Court database ID (e.g., 'onsc', 'onca', 'csc-scc')"},"caseId":{"type":"string","pattern":"^[a-zA-Z0-9_\\-]{1,100}$","description":"Case unique identifier (e.g., '2021onsc8582')"},"metadataType":{"type":"string","enum":["citedCases","citingCases","citedLegislations"],"description":"Type of citation data to preview"}},"required":["databaseId","caseId","metadataType"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"},"execution":{"taskSupport":"forbidden"}},{"name":"get_legislation_databases","description":"List all available legislation databases in Canada. Returns database IDs for browsing statutes and regulations. Key databases: ons (Ontario Statutes), onr (Ontario Regulations), cas (Canada Statutes), car (Canada Regulations), bcs (BC Statutes), abs (Alberta Statutes).","inputSchema":{"type":"object","properties":{"language":{"type":"string","enum":["en","fr"],"default":"en","description":"Language: 'en' for English (default), 'fr' for French"},"publishedBefore":{"type":"string","pattern":"^\\d{4}-\\d{2}-\\d{2}$","description":"Date first published on CanLII (YYYY-MM-DD)"},"publishedAfter":{"$ref":"#/properties/publishedBefore","description":"Date first published on CanLII (YYYY-MM-DD)"},"modifiedBefore":{"$ref":"#/properties/publishedBefore","description":"Date content last modified on CanLII (YYYY-MM-DD)"},"modifiedAfter":{"$ref":"#/properties/publishedBefore","description":"Date content last modified on CanLII (YYYY-MM-DD)"},"changedBefore":{"$ref":"#/properties/publishedBefore","description":"Date metadata or content last changed on CanLII (YYYY-MM-DD)"},"changedAfter":{"$ref":"#/properties/publishedBefore","description":"Date metadata or content last changed on CanLII (YYYY-MM-DD)"},"decisionDateBefore":{"$ref":"#/properties/publishedBefore","description":"Decision date upper bound (YYYY-MM-DD)"},"decisionDateAfter":{"$ref":"#/properties/publishedBefore","description":"Decision date lower bound (YYYY-MM-DD)"}},"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"},"execution":{"taskSupport":"forbidden"}},{"name":"browse_legislation","description":"List all legislation items in a specific database. Use to find legislation IDs for metadata lookup. Key statutes by database — ons: Children's Law Reform Act, Family Law Act, Employment Standards Act. cas: Divorce Act, Criminal Code, Canada Labour Code, Federal Child Support Guidelines.","inputSchema":{"type":"object","properties":{"language":{"type":"string","enum":["en","fr"],"default":"en","description":"Language: 'en' for English (default), 'fr' for French"},"databaseId":{"type":"string","pattern":"^[a-zA-Z0-9_\\-]{1,100}$","description":"Legislation database ID (e.g., 'ons' for Ontario Statutes, 'cas' for Canada Statutes, 'onr' for Ontario Regulations)"},"publishedBefore":{"type":"string","pattern":"^\\d{4}-\\d{2}-\\d{2}$","description":"Date first published on CanLII (YYYY-MM-DD)"},"publishedAfter":{"$ref":"#/properties/publishedBefore","description":"Date first published on CanLII (YYYY-MM-DD)"},"modifiedBefore":{"$ref":"#/properties/publishedBefore","description":"Date content last modified on CanLII (YYYY-MM-DD)"},"modifiedAfter":{"$ref":"#/properties/publishedBefore","description":"Date content last modified on CanLII (YYYY-MM-DD)"},"changedBefore":{"$ref":"#/properties/publishedBefore","description":"Date metadata or content last changed on CanLII (YYYY-MM-DD)"},"changedAfter":{"$ref":"#/properties/publishedBefore","description":"Date metadata or content last changed on CanLII (YYYY-MM-DD)"},"decisionDateBefore":{"$ref":"#/properties/publishedBefore","description":"Decision date upper bound (YYYY-MM-DD)"},"decisionDateAfter":{"$ref":"#/properties/publishedBefore","description":"Decision date lower bound (YYYY-MM-DD)"}},"required":["databaseId"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"},"execution":{"taskSupport":"forbidden"}},{"name":"get_legislation_regulation_metadata","description":"Get metadata for a specific statute or regulation including its CanLII URL, citation, and table of contents. The URL links directly to the full legislation text on canlii.org — always provide this to the user.","inputSchema":{"type":"object","properties":{"language":{"type":"string","enum":["en","fr"],"default":"en","description":"Language: 'en' for English (default), 'fr' for French"},"databaseId":{"type":"string","pattern":"^[a-zA-Z0-9_\\-]{1,100}$","description":"Legislation database ID (e.g., 'ons' for Ontario Statutes)"},"legislationId":{"type":"string","pattern":"^[a-zA-Z0-9_\\-]{1,100}$","description":"Specific legislation ID from browse results"}},"required":["databaseId","legislationId"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"},"execution":{"taskSupport":"forbidden"}}]},"jsonrpc":"2.0","id":1}
+TOOLS: {
+  "tools": [
+    {
+      "name": "search",
+      "description": "Search CanLII for cases, legislation, and commentary by keyword. This is the primary entry point for legal research. Returns case citations and titles ranked by relevance — does NOT include keywords, dates, or URLs. Call get_case_metadata on promising results to get full details before citing a case. Search is keyword-based, not semantic — use specific legal terms rather than natural language. Common terms: 'best interests of the child', 'material change in circumstances', 'standard of review', 'duty to consult', 'reasonable expectation of privacy'. Include jurisdiction to narrow results (e.g., 'Ontario', 'Alberta'). Date filters are NOT supported on search. Always cite the CanLII citation and provide the case URL so the user can verify the source.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Full-text search query. Can include case names, legal concepts, legislation references, or keywords."
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "fr"
+            ],
+            "default": "en",
+            "description": "Language: 'en' for English (default), 'fr' for French"
+          },
+          "resultCount": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 10,
+            "description": "Number of results to return (1-100, default 10). Keep low for AI context efficiency."
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0,
+            "default": 0,
+            "description": "Pagination offset (default 0). Use to page through results."
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "get_courts_and_tribunals",
+      "description": "List all available court and tribunal databases in Canada. Returns database IDs needed for other tools. Key databases: onsc (Ontario Superior Court), onca (Ontario Court of Appeal), oncj (Ontario Court of Justice), onscdc (Divisional Court), csc-scc (Supreme Court of Canada), bcsc (BC Supreme Court), abkb (Alberta King's Bench). Use this to discover valid databaseId values for browse and citator tools.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "fr"
+            ],
+            "default": "en",
+            "description": "Language: 'en' for English (default), 'fr' for French"
+          },
+          "publishedBefore": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Date first published on CanLII (YYYY-MM-DD)"
+          },
+          "publishedAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date first published on CanLII (YYYY-MM-DD)"
+          },
+          "modifiedBefore": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date content last modified on CanLII (YYYY-MM-DD)"
+          },
+          "modifiedAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date content last modified on CanLII (YYYY-MM-DD)"
+          },
+          "changedBefore": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date metadata or content last changed on CanLII (YYYY-MM-DD)"
+          },
+          "changedAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date metadata or content last changed on CanLII (YYYY-MM-DD)"
+          },
+          "decisionDateBefore": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Decision date upper bound (YYYY-MM-DD)"
+          },
+          "decisionDateAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Decision date lower bound (YYYY-MM-DD)"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "get_case_law_decisions",
+      "description": "List case law decisions from a specific court database. Use date filters to narrow results. Useful for browsing recent decisions from a specific court. Results are ordered by most recently added. Use get_case_metadata to get full details on a specific case.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "fr"
+            ],
+            "default": "en",
+            "description": "Language: 'en' for English (default), 'fr' for French"
+          },
+          "databaseId": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_\\-]{1,100}$",
+            "description": "Court database ID (e.g., 'onsc' for Ontario Superior Court, 'onca' for Ontario Court of Appeal, 'csc-scc' for Supreme Court of Canada)"
+          },
+          "offset": {
+            "type": "number",
+            "default": 0,
+            "description": "Start position for results (default 0 = most recent)"
+          },
+          "resultCount": {
+            "type": "number",
+            "maximum": 10000,
+            "default": 20,
+            "description": "Number of results to return (max 10,000, default 20)"
+          },
+          "publishedBefore": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Date first published on CanLII (YYYY-MM-DD)"
+          },
+          "publishedAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date first published on CanLII (YYYY-MM-DD)"
+          },
+          "modifiedBefore": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date content last modified on CanLII (YYYY-MM-DD)"
+          },
+          "modifiedAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date content last modified on CanLII (YYYY-MM-DD)"
+          },
+          "changedBefore": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date metadata or content last changed on CanLII (YYYY-MM-DD)"
+          },
+          "changedAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date metadata or content last changed on CanLII (YYYY-MM-DD)"
+          },
+          "decisionDateBefore": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Decision date upper bound (YYYY-MM-DD)"
+          },
+          "decisionDateAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Decision date lower bound (YYYY-MM-DD)"
+          }
+        },
+        "required": [
+          "databaseId"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "get_case_metadata",
+      "description": "Get detailed metadata for a specific case including its CanLII URL, citation, decision date, docket number, keywords, and topics. The URL field links directly to the full decision text on canlii.org — always provide this to the user for verification. Use after finding a case via search or browse to get complete details before citing it.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "fr"
+            ],
+            "default": "en",
+            "description": "Language: 'en' for English (default), 'fr' for French"
+          },
+          "databaseId": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_\\-]{1,100}$",
+            "description": "Court database ID (e.g., 'onsc', 'onca', 'csc-scc')"
+          },
+          "caseId": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_\\-]{1,100}$",
+            "description": "Case unique identifier from search/browse results (e.g., '2021onsc8582')"
+          },
+          "publishedBefore": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Date first published on CanLII (YYYY-MM-DD)"
+          },
+          "publishedAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date first published on CanLII (YYYY-MM-DD)"
+          },
+          "modifiedBefore": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date content last modified on CanLII (YYYY-MM-DD)"
+          },
+          "modifiedAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date content last modified on CanLII (YYYY-MM-DD)"
+          },
+          "changedBefore": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date metadata or content last changed on CanLII (YYYY-MM-DD)"
+          },
+          "changedAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date metadata or content last changed on CanLII (YYYY-MM-DD)"
+          },
+          "decisionDateBefore": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Decision date upper bound (YYYY-MM-DD)"
+          },
+          "decisionDateAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Decision date lower bound (YYYY-MM-DD)"
+          }
+        },
+        "required": [
+          "databaseId",
+          "caseId"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "get_case_citator",
+      "description": "Look up citation relationships for a case. Critical for verifying if a case is still good law. Use 'citingCases' to see what later cases cite this decision — if many recent cases cite it approvingly, it is strong authority. Use 'citedCases' to see what authorities this case relied on. Use 'citedLegislations' to see what statutes the case references. Returns the full list of citing/cited items.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "fr"
+            ],
+            "default": "en",
+            "description": "Language: 'en' for English (default), 'fr' for French"
+          },
+          "databaseId": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_\\-]{1,100}$",
+            "description": "Court database ID (e.g., 'onsc', 'onca', 'csc-scc')"
+          },
+          "caseId": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_\\-]{1,100}$",
+            "description": "Case unique identifier (e.g., '2021onsc8582')"
+          },
+          "metadataType": {
+            "type": "string",
+            "enum": [
+              "citedCases",
+              "citingCases",
+              "citedLegislations"
+            ],
+            "description": "'citingCases' = what later cases cite this one (check if still good law); 'citedCases' = what this case relies on; 'citedLegislations' = statutes referenced"
+          },
+          "publishedBefore": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Date first published on CanLII (YYYY-MM-DD)"
+          },
+          "publishedAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date first published on CanLII (YYYY-MM-DD)"
+          },
+          "modifiedBefore": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date content last modified on CanLII (YYYY-MM-DD)"
+          },
+          "modifiedAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date content last modified on CanLII (YYYY-MM-DD)"
+          },
+          "changedBefore": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date metadata or content last changed on CanLII (YYYY-MM-DD)"
+          },
+          "changedAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date metadata or content last changed on CanLII (YYYY-MM-DD)"
+          },
+          "decisionDateBefore": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Decision date upper bound (YYYY-MM-DD)"
+          },
+          "decisionDateAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Decision date lower bound (YYYY-MM-DD)"
+          }
+        },
+        "required": [
+          "databaseId",
+          "caseId",
+          "metadataType"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "get_case_citator_tease",
+      "description": "Quick preview of citation relationships (max 5 results). Faster than the full citator. Use this for a quick check on whether a case has been cited, then use get_case_citator for the complete list if needed.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "fr"
+            ],
+            "default": "en",
+            "description": "Language: 'en' for English (default), 'fr' for French"
+          },
+          "databaseId": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_\\-]{1,100}$",
+            "description": "Court database ID (e.g., 'onsc', 'onca', 'csc-scc')"
+          },
+          "caseId": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_\\-]{1,100}$",
+            "description": "Case unique identifier (e.g., '2021onsc8582')"
+          },
+          "metadataType": {
+            "type": "string",
+            "enum": [
+              "citedCases",
+              "citingCases",
+              "citedLegislations"
+            ],
+            "description": "Type of citation data to preview"
+          }
+        },
+        "required": [
+          "databaseId",
+          "caseId",
+          "metadataType"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "get_legislation_databases",
+      "description": "List all available legislation databases in Canada. Returns database IDs for browsing statutes and regulations. Key databases: ons (Ontario Statutes), onr (Ontario Regulations), cas (Canada Statutes), car (Canada Regulations), bcs (BC Statutes), abs (Alberta Statutes).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "fr"
+            ],
+            "default": "en",
+            "description": "Language: 'en' for English (default), 'fr' for French"
+          },
+          "publishedBefore": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Date first published on CanLII (YYYY-MM-DD)"
+          },
+          "publishedAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date first published on CanLII (YYYY-MM-DD)"
+          },
+          "modifiedBefore": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date content last modified on CanLII (YYYY-MM-DD)"
+          },
+          "modifiedAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date content last modified on CanLII (YYYY-MM-DD)"
+          },
+          "changedBefore": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date metadata or content last changed on CanLII (YYYY-MM-DD)"
+          },
+          "changedAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date metadata or content last changed on CanLII (YYYY-MM-DD)"
+          },
+          "decisionDateBefore": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Decision date upper bound (YYYY-MM-DD)"
+          },
+          "decisionDateAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Decision date lower bound (YYYY-MM-DD)"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "browse_legislation",
+      "description": "List all legislation items in a specific database. Use to find legislation IDs for metadata lookup. Key statutes by database — ons: Children's Law Reform Act, Family Law Act, Employment Standards Act. cas: Divorce Act, Criminal Code, Canada Labour Code, Federal Child Support Guidelines.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "fr"
+            ],
+            "default": "en",
+            "description": "Language: 'en' for English (default), 'fr' for French"
+          },
+          "databaseId": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_\\-]{1,100}$",
+            "description": "Legislation database ID (e.g., 'ons' for Ontario Statutes, 'cas' for Canada Statutes, 'onr' for Ontario Regulations)"
+          },
+          "publishedBefore": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Date first published on CanLII (YYYY-MM-DD)"
+          },
+          "publishedAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date first published on CanLII (YYYY-MM-DD)"
+          },
+          "modifiedBefore": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date content last modified on CanLII (YYYY-MM-DD)"
+          },
+          "modifiedAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date content last modified on CanLII (YYYY-MM-DD)"
+          },
+          "changedBefore": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date metadata or content last changed on CanLII (YYYY-MM-DD)"
+          },
+          "changedAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Date metadata or content last changed on CanLII (YYYY-MM-DD)"
+          },
+          "decisionDateBefore": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Decision date upper bound (YYYY-MM-DD)"
+          },
+          "decisionDateAfter": {
+            "$ref": "#/properties/publishedBefore",
+            "description": "Decision date lower bound (YYYY-MM-DD)"
+          }
+        },
+        "required": [
+          "databaseId"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "get_legislation_regulation_metadata",
+      "description": "Get metadata for a specific statute or regulation including its CanLII URL, citation, and table of contents. The URL links directly to the full legislation text on canlii.org — always provide this to the user.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "fr"
+            ],
+            "default": "en",
+            "description": "Language: 'en' for English (default), 'fr' for French"
+          },
+          "databaseId": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_\\-]{1,100}$",
+            "description": "Legislation database ID (e.g., 'ons' for Ontario Statutes)"
+          },
+          "legislationId": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_\\-]{1,100}$",
+            "description": "Specific legislation ID from browse results"
+          }
+        },
+        "required": [
+          "databaseId",
+          "legislationId"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    }
+  ]
+}

@@ -15,6 +15,8 @@ export enum CopilotProviderType {
   OpenAI = 'openai',
   Perplexity = 'perplexity',
   Morph = 'morph',
+  Whisper = 'whisper',
+  Ollama = 'ollama',
 }
 
 export const CopilotProviderSchema = z.object({
@@ -67,6 +69,7 @@ export const PromptToolsSchema = z
     'docEdit',
     // work with indexer
     'docRead',
+    'docAnalyzeAttachments',
     'docCreate',
     'docUpdate',
     'docUpdateMeta',
@@ -79,6 +82,8 @@ export const PromptToolsSchema = z
     'docCompose',
     // section editing
     'sectionEdit',
+    'canliiSearch',
+    'a2ajSearch',
   ])
   .array();
 
@@ -276,6 +281,8 @@ export const CopilotChatOptionsSchema = CopilotProviderOptionsSchema.merge(
   .extend({
     reasoning: z.boolean().optional(),
     webSearch: z.boolean().optional(),
+    canliiSearch: z.boolean().optional(),
+    a2ajSearch: z.boolean().optional(),
   })
   .optional();
 

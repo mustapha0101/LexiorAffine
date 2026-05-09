@@ -121,10 +121,32 @@ export abstract class EmbeddingClient {
     try {
       doc = await parseDoc(file.name, buffer);
     } catch (e: any) {
-      throw new CopilotContextFileNotSupported({
-        fileName: file.name,
-        message: e?.message || e?.toString?.() || 'format not supported',
-      });
+      // Fallback for unsupported formats
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      let parsedFallbackText: string | null = null;
+      
+      if (ext === 'md' || ext === 'txt' || ext === 'csv' || ext === 'json') {
+        parsedFallbackText = buffer.toString('utf-8');
+      } else if (ext === 'xlsx' || ext === 'pptx' || ext === 'docx' || ext === 'pdf' || ext === 'odt' || ext === 'odp' || ext === 'ods') {
+        try {
+          const { parseOfficeAsync } = await import('officeparser');
+          parsedFallbackText = await parseOfficeAsync(buffer);
+        } catch (err) {
+          // silent fallback
+        }
+      }
+
+      if (parsedFallbackText && parsedFallbackText.trim() !== '') {
+        const rawChunks = parsedFallbackText.match(/.{1,1000}(\s|$)/g) || [parsedFallbackText];
+        doc = {
+          chunks: rawChunks.map((content, index) => ({ index, content }))
+        };
+      } else {
+        throw new CopilotContextFileNotSupported({
+          fileName: file.name,
+          message: e?.message || e?.toString?.() || 'format not supported',
+        });
+      }
     }
     if (doc && !signal?.aborted) {
       if (!doc.chunks.length) {

@@ -483,7 +483,7 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
             </style>
           `,
           () => when(
-            this.filetype === 'pdf',
+            ['pdf', 'docx', 'xlsx', 'pptx', 'md', 'txt', 'csv'].includes(this.filetype.toLowerCase()),
             () => html`
             <div style="position: absolute; top: 12px; right: 12px; display: flex; gap: 8px; z-index: 10;">
               <button

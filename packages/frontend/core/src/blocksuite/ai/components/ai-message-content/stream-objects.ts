@@ -88,6 +88,19 @@ export class ChatContentStreamObjects extends WithDisposable(
             .width=${this.width}
           ></web-search-tool>
         `;
+      case 'canlii_search_cases':
+      case 'canlii_get_case_metadata':
+      case 'canlii_search_legislation':
+      case 'canlii_get_legislation_metadata':
+      case 'a2aj_coverage':
+      case 'a2aj_fetch_document':
+      case 'a2aj_search_legal_documents':
+        return html`
+          <legal-search-tool
+            .data=${streamObject}
+            .width=${this.width}
+          ></legal-search-tool>
+        `;
       case 'doc_compose':
         return html`
           <doc-compose-tool
@@ -181,6 +194,19 @@ export class ChatContentStreamObjects extends WithDisposable(
             .data=${streamObject}
             .width=${this.width}
           ></web-search-tool>
+        `;
+      case 'canlii_search_cases':
+      case 'canlii_get_case_metadata':
+      case 'canlii_search_legislation':
+      case 'canlii_get_legislation_metadata':
+      case 'a2aj_coverage':
+      case 'a2aj_fetch_document':
+      case 'a2aj_search_legal_documents':
+        return html`
+          <legal-search-tool
+            .data=${streamObject}
+            .width=${this.width}
+          ></legal-search-tool>
         `;
       case 'doc_compose':
         return html`
