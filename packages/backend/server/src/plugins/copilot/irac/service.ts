@@ -217,11 +217,62 @@ C'est TRÈS IMPORTANT de mettre TOUT le résumé généré uniquement dans la pr
           const buffer = await readBufferWithLimit(body as any, 50 * OneMB);
           const mime = blobMeta?.mime || 'application/pdf';
           
-          if (mime !== 'application/pdf') {
+          if (mime === 'application/pdf' || mime.includes('pdf')) {
+            try {
+              const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs');
+              const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(buffer) });
+              const pdfDocument = await loadingTask.promise;
+              let fullText = '';
+              for (let i = 1; i <= pdfDocument.numPages; i++) {
+                const page = await pdfDocument.getPage(i);
+                const textContent = await page.getTextContent();
+                fullText += textContent.items.map((s: any) => s.str).join(' ') + '\n';
+              }
+              extractedText = fullText;
+              
+              // OCR FALLBACK
+              if (!extractedText || extractedText.trim() === '') {
+                 console.log("IRAC: No text found in PDF, starting OCR fallback via Tesseract...");
+                 try {
+                   const pdf2img = require('pdf-img-convert');
+                   const Tesseract = require('tesseract.js');
+                   
+                   // Convert PDF to an array of PNG buffers (scale 2.0 for better OCR quality)
+                   const imageBuffers = await pdf2img.convert(buffer, { scale: 2.0 });
+                   let ocrText = '';
+                   
+                   for (let i = 0; i < imageBuffers.length; i++) {
+                     console.log(`IRAC: OCR processing page ${i+1}/${imageBuffers.length}...`);
+                     const { data: { text } } = await Tesseract.recognize(imageBuffers[i], 'fra', { logger: (m: any) => console.log(m) });
+                     ocrText += text + '\n\n';
+                   }
+                   
+                   extractedText = ocrText;
+                   console.log("IRAC: OCR completed successfully.");
+                 } catch (ocrErr: any) {
+                   console.error("IRAC: OCR Failed:", ocrErr);
+                   extractedText = "[Avertissement: Ce PDF semble être un document scanné sans texte lisible, et le moteur OCR a échoué. Veuillez fournir un résumé vous-même.]";
+                 }
+              }
+            } catch (err: any) {
+              console.warn("IRAC: Could not parse PDF file, falling back to raw attachment", err);
+              attachments.push({
+                kind: 'bytes',
+                data: buffer.toString('base64'),
+                mimeType: mime,
+              });
+            }
+          } else {
             try {
               const { parseOffice } = await import('officeparser');
               const ast = await parseOffice(buffer);
-              extractedText = ast.toText();
+              if (typeof ast === 'string') {
+                 extractedText = ast;
+              } else if (ast && typeof (ast as any).toText === 'function') {
+                 extractedText = (ast as any).toText();
+              } else {
+                 extractedText = String(ast);
+              }
             } catch (err) {
                console.warn("IRAC: Could not parse office file, falling back to raw attachment", err);
                attachments.push({
@@ -230,19 +281,51 @@ C'est TRÈS IMPORTANT de mettre TOUT le résumé généré uniquement dans la pr
                  mimeType: mime,
                });
             }
-          } else {
-             attachments.push({
-               kind: 'bytes',
-               data: buffer.toString('base64'),
-               mimeType: mime,
-             });
           }
         }
+      }
+
+      // CHUNKING (MAP-REDUCE)
+      if (extractedText && extractedText.length > 25000) {
+        console.log(`IRAC: Extracted text is too large (${extractedText.length} chars). Starting Map-Reduce chunking...`);
+        const chunkSize = 25000;
+        const chunks: string[] = [];
+        for (let i = 0; i < extractedText.length; i += chunkSize) {
+          chunks.push(extractedText.substring(i, i + chunkSize));
+        }
+
+        let combinedSummary = '';
+        for (let i = 0; i < chunks.length; i++) {
+          console.log(`IRAC: Processing chunk ${i + 1} of ${chunks.length}...`);
+          try {
+            // Get text provider
+            const textProvider = await this.providerFactory.getProvider({
+              outputType: ModelOutputType.Text,
+              modelId: actualModelId,
+            });
+            if (textProvider) {
+              const chunkResult = await textProvider.text(
+                { modelId: actualModelId },
+                [
+                  { role: 'system' as const, content: 'Tu es un assistant analytique. Fais un résumé EXTRÊMEMENT CONCIS (3 puces maximum) des idées principales de cet extrait. Ne génère pas de long texte.' },
+                  { role: 'user' as const, content: `Extrait (${i + 1}/${chunks.length}):\n\n${chunks[i]}` }
+                ]
+              );
+              combinedSummary += `\n\n--- Partie ${i + 1} ---\n` + chunkResult;
+            }
+          } catch (chunkErr) {
+            console.warn(`IRAC: Failed to summarize chunk ${i + 1}:`, chunkErr);
+          }
+        }
+        extractedText = combinedSummary;
+        console.log(`IRAC: Map-Reduce completed. New text length: ${extractedText.length}`);
       }
 
       const promptContent = extractedText 
         ? `Veuillez analyser le document suivant:\n\n${extractedText}` 
         : "Veuillez analyser le document attaché.";
+
+      console.log(`IRAC: Sending to LLM. Extracted text length: ${extractedText?.length || 0}`);
 
       const result = await provider.structure(
         { modelId: actualModelId },
@@ -253,11 +336,15 @@ C'est TRÈS IMPORTANT de mettre TOUT le résumé généré uniquement dans la pr
         { schema: IracResponseSchema }
       );
 
+      console.log(`IRAC: Raw LLM output:`, result);
+
       let cleanResult = result.trim();
       const match = cleanResult.match(/```json([\s\S]*?)```/i) || cleanResult.match(/```([\s\S]*?)```/);
       if (match) {
         cleanResult = match[1].trim();
       }
+      
+      console.log(`IRAC: Cleaned JSON for parsing:`, cleanResult);
       const parsed: IracPayload = IracResponseSchema.parse(JSON.parse(cleanResult));
 
       await this.models.copilotJob.update(jobId, {

@@ -261,7 +261,7 @@ export function getCopilotSelectedElems(host: EditorHost): GfxModel[] {
   const gfx = host.std.get(GfxControllerIdentifier);
   const copilotWidget = getEdgelessCopilotWidget(host);
 
-  if (copilotWidget.visible) {
+  if (copilotWidget?.visible) {
     const currentTool = gfx.tool.currentTool$.peek() as CopilotTool;
     return currentTool?.selectedElements ?? [];
   }

@@ -129,8 +129,8 @@ export abstract class EmbeddingClient {
         parsedFallbackText = buffer.toString('utf-8');
       } else if (ext === 'xlsx' || ext === 'pptx' || ext === 'docx' || ext === 'pdf' || ext === 'odt' || ext === 'odp' || ext === 'ods') {
         try {
-          const { parseOfficeAsync } = await import('officeparser');
-          parsedFallbackText = await parseOfficeAsync(buffer);
+          const officeparser = await import('officeparser');
+          parsedFallbackText = await (officeparser as any).parseOfficeAsync(buffer);
         } catch (err) {
           // silent fallback
         }

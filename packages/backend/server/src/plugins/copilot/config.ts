@@ -267,11 +267,11 @@ defineModuleConfig('copilot', {
         chat: 'qwen3:8b',
         embedding: 'nomic-embed-text:latest',
         image: 'gpt-image-1', // Assuming no local image gen model is registered yet
-        coding: 'mistral:7b-instruct-q4_K_M',
-        complex_text_generation: 'mistral:7b-instruct-q4_K_M',
-        quick_decision_making: 'mistral:7b-instruct-q4_K_M',
-        quick_text_generation: 'mistral:7b-instruct-q4_K_M',
-        polish_and_summarize: 'mistral:7b-instruct-q4_K_M',
+        coding: 'qwen3:8b',
+        complex_text_generation: 'qwen3:8b',
+        quick_decision_making: 'qwen3:8b',
+        quick_text_generation: 'qwen3:8b',
+        polish_and_summarize: 'qwen3:8b',
       } : {
         audio_transcribing: 'gemini-2.5-flash',
         chat: 'gemini-2.5-flash',

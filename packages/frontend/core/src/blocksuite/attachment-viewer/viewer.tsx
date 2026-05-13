@@ -22,6 +22,13 @@ const items = [
   },
   */
   {
+    name: "Classifier par l'IA",
+    icon: <span>🤖</span>,
+    action: async (model: AttachmentBlockModel) => {
+      document.dispatchEvent(new CustomEvent('request-legal-classification', { detail: { pageId: model.doc.id, blockId: model.id } }));
+    },
+  },
+  {
     name: 'Download',
     icon: <LocalDataIcon />,
     action: download,

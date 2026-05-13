@@ -70,10 +70,18 @@ export const buildDocContentGetter = (
       const docRecord = await docReader.getDoc(options.workspace, docId);
       if (docRecord) {
         const result = await readAllBlocksFromDocSnapshot(docId, docRecord.bin);
+        
+        import('fs').then(fs => {
+           fs.writeFileSync('/tmp/lexior_debug_blocks.json', JSON.stringify({ docId, blockCount: result.blocks.length, blocks: result.blocks }, null, 2));
+        });
+
         const attachments = result.blocks.filter(b => b.flavour === 'affine:attachment' || b.flavour === 'affine:embed');
-        if (attachments && attachments.length > 0) {
-           const fileNames = attachments.map(a => (a.additional as any)?.name ?? (a.additional as any)?.title ?? 'document_attache').join(', ');
+        const fileNames = attachments.map(a => (a.additional as any)?.name ?? (a.additional as any)?.title).filter(Boolean).join(', ');
+
+        if (attachments.length > 0) {
            markdownContent += `\n\n[System Note: This document contains ${attachments.length} attached file(s) (${fileNames}). You MUST IMMEDIATELY invoke the \`docAnalyzeAttachments\` tool to extract and read the contents of these files before answering. DO NOT write any conversational text. DO NOT explain what you are going to do. ONLY output the tool call.]`;
+        } else {
+           markdownContent += `\n\n[System Note: NO ATTACHMENTS WERE FOUND IN THIS DOCUMENT. If the user asks to summarize a PDF or file, tell them EXACTLY: "Aucune pièce jointe n'a été trouvée dans la base de données pour ce document. Assurez-vous que le fichier est complètement uploadé."]`;
         }
       }
     } catch (e) {

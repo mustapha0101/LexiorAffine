@@ -72,7 +72,7 @@ export function createCanliiSearchCasesTool() {
   return defineTool({
     description: 'Full-text search of Canadian jurisprudence across all courts and tribunals. Returns relevance-ranked case citations, summaries, and URLs.',
     inputSchema: z.object({
-      query: z.string().describe('Search query using boolean operators (AND, OR, NOT), exact phrases in quotes, or keywords.'),
+      query: z.string().describe('MUST BE A KEYWORD SEARCH. DO NOT USE NATURAL LANGUAGE. Search query using boolean operators (AND, OR, NOT), exact phrases in quotes, or keywords.'),
       language: z.enum(['en', 'fr']).optional().default('en'),
       jurisdiction: z.string().optional().describe('Filter by jurisdiction (e.g., "ON", "QC", "FCA").'),
       decisionDateAfter: z.string().optional().describe('Date lower bound (YYYY-MM-DD).'),

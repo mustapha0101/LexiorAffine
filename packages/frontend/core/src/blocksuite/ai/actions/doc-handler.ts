@@ -114,7 +114,7 @@ function actionToStream<T extends keyof BlockSuitePresets.AIActions>(
       const options = {
         ...variants,
         attachments,
-        input: input ? (markdown ? `${markdown}\n${input}` : input) : markdown,
+        input: input ? (markdown ? `${markdown}\n${input}` : input) : ((variants as any)?.promptContext ? `${(variants as any).promptContext}\n${markdown}` : markdown),
         stream: true,
         host,
         models,

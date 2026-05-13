@@ -389,12 +389,19 @@ export function actionToHandler<T extends keyof BlockSuitePresets.AIActions>(
   return (host: EditorHost) => {
     const aiPanel = getAIPanelWidget(host);
     const edgelessCopilot = getEdgelessCopilotWidget(host);
-    const selectedElements = getCopilotSelectedElems(host);
+    let selectedElements = getCopilotSelectedElems(host);
+    if (selectedElements.length === 0) {
+      const gfx = host.std.get(GfxControllerIdentifier);
+      selectedElements = gfx.gfxElements || [];
+    }
+    
     const { selectedBlocks } = getSelections(host);
     const ctx = new AIContext({ selectedElements });
 
-    edgelessCopilot.hideCopilotPanel();
-    edgelessCopilot.lockToolbar(true);
+    if (edgelessCopilot) {
+      edgelessCopilot.hideCopilotPanel();
+      edgelessCopilot.lockToolbar(true);
+    }
 
     updateEdgelessAIPanelConfig(
       aiPanel,
@@ -430,8 +437,10 @@ export function actionToHandler<T extends keyof BlockSuitePresets.AIActions>(
     if (!referenceElement) {
       const gfx = host.std.get(GfxControllerIdentifier);
       gfx?.tool.setTool(DefaultTool);
-      edgelessCopilot.lockToolbar(false);
-      return;
+      if (edgelessCopilot) {
+        edgelessCopilot.lockToolbar(false);
+      }
+      referenceElement = host;
     }
 
     if (isCreateImageAction || isMakeItRealAction) {

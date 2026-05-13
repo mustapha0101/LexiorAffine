@@ -3,6 +3,7 @@ import type { Store } from '@blocksuite/affine/store';
 import { TagService } from '@affine/core/modules/tag';
 import { useService } from '@toeverything/infra';
 import { toast } from '@affine/component';
+import { EditorService } from '@affine/core/modules/editor';
 
 import { DocsService } from '@affine/core/modules/doc';
 
@@ -26,17 +27,27 @@ export function useLegalClassificationInterceptor(page: Store) {
       const runAiClassification = async () => {
         let textContent = '';
         try {
-          const blocks = Array.from(page.blocks.values());
-          textContent = blocks.map((b: any) => b.text?.toString() || b.model?.text?.toString() || '').join('\n').trim();
+          if (blockId) {
+            const block = page.getBlock(blockId);
+            if (block) {
+              const m = block.model as any;
+              const title = m.name || m.title || m.caption || '';
+              const text = m.text?.toString() || '';
+              textContent = `Pièce jointe / Élément sélectionné : ${title} ${text}`.trim();
+            }
+          } else {
+            const blocks = Array.from(page.blocks.values());
+            textContent = blocks.map((b: any) => b.text?.toString() || b.model?.text?.toString() || '').join('\n').trim();
+          }
         } catch (e) {
           console.error(e);
         }
 
-        if (!textContent) {
-          textContent = "Document vide";
+        if (!textContent || textContent === 'Pièce jointe / Élément sélectionné :') {
+          textContent = "Document ou pièce vide";
         }
 
-        const prompt = `Voici un texte extrait d'un document. Détermine à quelle catégorie juridique il appartient parmi ces 4 catégories: Audience, Preuve, Pièce, Correspondance. Réponds UNIQUEMENT avec le nom de la catégorie exacte et rien d'autre. Texte: ${textContent.substring(0, 4000)}`;
+        const prompt = `Voici un texte ou le titre d'une pièce jointe. Détermine à quelle catégorie juridique il appartient parmi ces 4 catégories: Audience, Preuve, Pièce, Correspondance. Réponds UNIQUEMENT avec le nom de la catégorie exacte et rien d'autre. Contenu: ${textContent.substring(0, 4000)}`;
 
         try {
           const response = await fetch('http://localhost:11434/api/generate', {

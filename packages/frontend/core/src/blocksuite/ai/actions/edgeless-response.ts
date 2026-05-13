@@ -428,7 +428,28 @@ function responseToBrainstormMindmap(host: EditorHost, ctx: AIContext) {
     surface.deleteElement(mindmap.id);
     node.xywh = xywh;
   } else {
-    node.xywh = `[${selectionRect.x + selectionRect.width + 100},${selectionRect.y},0,0]`;
+    let x = 0;
+    let y = 0;
+    try {
+      // Filter out elements that don't have standard bounds (like surface blocks or lines)
+      const validElements = elements ? elements.filter(el => typeof el.xywh === 'string') : [];
+      if (validElements.length > 0) {
+        const { x: cx, y: cy, w, h } = getCommonBoundWithRotation(validElements);
+        x = cx + w + 100;
+        y = cy;
+      } else if (selectionRect && selectionRect.width > 0) {
+        x = selectionRect.x + selectionRect.width + 100;
+        y = selectionRect.y;
+      } else {
+        x = gfx.viewport.centerX;
+        y = gfx.viewport.centerY;
+      }
+    } catch (e) {
+      console.warn("Failed to compute mindmap bounds", e);
+      x = gfx.viewport.centerX;
+      y = gfx.viewport.centerY;
+    }
+    node.xywh = `[${x},${y},0,0]`;
   }
 
   edgelessCopilot.hideCopilotPanel();

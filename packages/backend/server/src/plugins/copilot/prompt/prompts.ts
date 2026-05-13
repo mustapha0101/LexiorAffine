@@ -107,7 +107,7 @@ const workflows: Prompt[] = [
   {
     name: 'workflow:presentation:step1',
     action: 'workflow:presentation:step1',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     config: { temperature: 0.7 },
     messages: [
       {
@@ -124,7 +124,7 @@ const workflows: Prompt[] = [
   {
     name: 'workflow:presentation:step2',
     action: 'workflow:presentation:step2',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     messages: [
       {
         role: 'system',
@@ -143,7 +143,7 @@ const workflows: Prompt[] = [
   {
     name: 'workflow:presentation:step4',
     action: 'workflow:presentation:step4',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     messages: [
       {
         role: 'system',
@@ -170,7 +170,7 @@ const workflows: Prompt[] = [
   {
     name: 'workflow:brainstorm:step1',
     action: 'workflow:brainstorm:step1',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     config: { temperature: 0.7 },
     messages: [
       {
@@ -187,7 +187,7 @@ const workflows: Prompt[] = [
   {
     name: 'workflow:brainstorm:step2',
     action: 'workflow:brainstorm:step2',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     config: {
       frequencyPenalty: 0.5,
       presencePenalty: 0.5,
@@ -222,7 +222,7 @@ const workflows: Prompt[] = [
   {
     name: 'workflow:image-sketch:step2',
     action: 'workflow:image-sketch:step2',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     messages: [
       {
         role: 'system',
@@ -263,7 +263,7 @@ const workflows: Prompt[] = [
   {
     name: 'workflow:image-clay:step2',
     action: 'workflow:image-clay:step2',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     messages: [
       {
         role: 'system',
@@ -304,7 +304,7 @@ const workflows: Prompt[] = [
   {
     name: 'workflow:image-anime:step2',
     action: 'workflow:image-anime:step2',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     messages: [
       {
         role: 'system',
@@ -345,7 +345,7 @@ const workflows: Prompt[] = [
   {
     name: 'workflow:image-pixel:step2',
     action: 'workflow:image-pixel:step2',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     messages: [
       {
         role: 'system',
@@ -438,7 +438,7 @@ Convert a multi-speaker audio recording into a structured JSON format by transcr
   {
     name: 'Conversation Summary',
     action: 'Conversation Summary',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     messages: [
       {
         role: 'system',
@@ -463,7 +463,7 @@ Return only the summary text—no headings, labels, or commentary.`,
   {
     name: 'Summary',
     action: 'Summary',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     messages: [
       {
         role: 'system',
@@ -494,7 +494,7 @@ You are an assistant helping summarize a document. Use this format, replacing te
   {
     name: 'Summary as title',
     action: 'Summary as title',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     messages: [
       {
         role: 'system',
@@ -511,7 +511,7 @@ You are an assistant helping summarize a document. Use this format, replacing te
   {
     name: 'Summary the webpage',
     action: 'Summary the webpage',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     messages: [
       {
         role: 'user',
@@ -523,7 +523,7 @@ You are an assistant helping summarize a document. Use this format, replacing te
   {
     name: 'Explain this',
     action: 'Explain this',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     messages: [
       {
         role: 'system',
@@ -717,7 +717,7 @@ You are a highly accomplished professional translator, demonstrating profound pr
   {
     name: 'Summarize the meeting structured',
     action: 'Summarize the meeting structured',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     messages: [
       {
         role: 'system',
@@ -752,7 +752,7 @@ Rules:
   {
     name: 'Summarize the meeting',
     action: 'Summarize the meeting',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     messages: [
       {
         role: 'system',
@@ -777,7 +777,7 @@ You are an assistant helping summarize a document. Use this format, replacing te
   {
     name: 'Find action for summary',
     action: 'Find action for summary',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     messages: [
       {
         role: 'system',
@@ -1121,7 +1121,7 @@ You are an assistant helping find actions of meeting summary. Use this format, r
   {
     name: 'Brainstorm mindmap',
     action: 'Brainstorm mindmap',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     messages: [
       {
         role: 'system',
@@ -1138,7 +1138,7 @@ You are an assistant helping find actions of meeting summary. Use this format, r
   {
     name: 'Expand mind map',
     action: 'Expand mind map',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     messages: [
       {
         role: 'system',
@@ -1215,7 +1215,7 @@ The output must be perfect. Adherence to every detail of these instructions is n
   {
     name: 'Improve grammar for it',
     action: 'Improve grammar for it',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     messages: [
       {
         role: 'system',
@@ -1284,7 +1284,7 @@ The output must be perfect. Adherence to every detail of these instructions is n
   {
     name: 'Find action items from it',
     action: 'Find action items from it',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     messages: [
       {
         role: 'system',
@@ -1308,7 +1308,7 @@ If there are items in the content that can be used as to-do tasks, please refer 
   {
     name: 'Check code error',
     action: 'Check code error',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     messages: [
       {
         role: 'system',
@@ -1368,7 +1368,7 @@ If there are items in the content that can be used as to-do tasks, please refer 
   {
     name: 'Create a presentation',
     action: 'Create a presentation',
-    model: 'gpt-5-mini',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
     messages: [
       {
         role: 'system',
@@ -2010,6 +2010,7 @@ Before starting Tool calling, you need to follow:
 - If the user asks a question that requires a document, file, or attachment (like a client file, a receipt, or a record), you MUST proactively search the workspace first using 'docKeywordSearch' or 'docSemanticSearch' to find the document before responding.
 - When searching for unknown information, personal information or keyword, prioritize searching the user's workspace rather than the web.
 - Depending on the complexity of the question and the information returned by the search tools, you can call different tools multiple times to search.
+- When retrieving legal decisions or legislation, read the full text before answering. You can and should make multiple tool calls if necessary to get the full text.
 - If the '<current_document_context>' is empty or does not contain enough text, you MUST IMMEDIATELY use the 'docAnalyzeAttachments' tool using the provided 'doc_id' to extract the text from the attachments.
 - Even if the content of the attachment is sufficient to answer the question, it is still necessary to search the user's workspace to avoid omissions.
 - For ANY legal research, jurisprudence, case law, or legislation queries (e.g., divorce cases, custody laws), you MUST use the provided Canadian legal search tools (like A2AJ or CanLII) if they are available. DO NOT use the general web search tool for legal questions unless specifically asked to search the web outside of Canada.
@@ -2101,7 +2102,6 @@ Below is the user's query. Please respond in the user's preferred language witho
       // 'sectionEdit',
       'docKeywordSearch',
       'docSemanticSearch',
-      'webSearch',
       'docCompose',
       'codeArtifact',
       'blobRead',

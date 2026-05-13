@@ -98,10 +98,16 @@ export const buildDocUpdateMetaHandler = (
   ac: AccessController,
   writer: DocWriter
 ) => {
-  return async (options: CopilotChatOptions, docId: string, title: string) => {
+  return async (options: CopilotChatOptions, title: string, docId?: string) => {
+    const targetDocId = docId || (options as any).docId;
+    
+    if (!targetDocId) {
+      return toolError('Doc Meta Update Failed', 'No document ID provided or available in context.');
+    }
+
     const notFound = toolError(
       'Doc Meta Update Failed',
-      `Doc with id ${docId} not found.`
+      `Doc with id ${targetDocId} not found.`
     );
 
     if (!options?.user || !options.workspace) {
@@ -111,7 +117,7 @@ export const buildDocUpdateMetaHandler = (
     const canAccess = await ac
       .user(options.user)
       .workspace(options.workspace)
-      .doc(docId)
+      .doc(targetDocId)
       .can('Doc.Update');
 
     if (!canAccess) {
@@ -125,14 +131,14 @@ export const buildDocUpdateMetaHandler = (
 
     await writer.updateDocMeta(
       options.workspace,
-      docId,
+      targetDocId,
       { title: sanitizedTitle },
       options.user
     );
 
     return {
       success: true,
-      docId,
+      docId: targetDocId,
       message: 'Document title updated successfully',
     };
   };
@@ -187,19 +193,19 @@ export const createDocUpdateTool = (
 };
 
 export const createDocUpdateMetaTool = (
-  updateDocMeta: (docId: string, title: string) => Promise<object>
+  updateDocMeta: (title: string, docId?: string) => Promise<object>
 ) => {
   return defineTool({
-    description: 'Update document metadata (currently title only).',
+    description: 'Update document metadata (currently title only) for the current document. Do not guess the doc_id, it is handled automatically.',
     inputSchema: z.object({
-      doc_id: z.string().describe('The ID of the document to update'),
       title: z.string().min(1).describe('The new document title'),
+      doc_id: z.string().optional().describe('Optional. The ID of the document to update. Omit to update current document.'),
     }),
-    execute: async ({ doc_id, title }) => {
+    execute: async ({ title, doc_id }) => {
       try {
-        return await updateDocMeta(doc_id, title);
+        return await updateDocMeta(title, doc_id);
       } catch (err: any) {
-        logger.error(`Failed to update document meta: ${doc_id}`, err);
+        logger.error(`Failed to update document meta`, err);
         return toolError('Doc Meta Update Failed', err.message);
       }
     },

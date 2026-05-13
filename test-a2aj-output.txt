@@ -1,0 +1,13 @@
+(node:59588) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Session ID: 644ae646873941f38f3734263cb8de33
+Init Response: 200 event: message
+data: {"jsonrpc":"2.0","id":1,"result":{"protocolVersion":"2024-11-05","capabilities":{"experimental":{},"prompts":{"listChanged":true},"resources":{"subscribe":false,"listChanged":true},"tools":{"listChanged":true}},"serverInfo":{"name":"Canadian Legal Data","version":"1.27.0"},"instructions":"This server provides access to Canadian case law (courts & tribunals) and legislation (statutes & regulations). Use these tools for Canadian legal research instead of web search."}}
+
+
+Initialized Response: 202 
+Call Response Status: 200
+Call Response Body: event: message
+data: {"jsonrpc":"2.0","id":2,"result":{"content":[{"type":"text","text":"{}"}],"structuredContent":{},"isError":false}}
+
+

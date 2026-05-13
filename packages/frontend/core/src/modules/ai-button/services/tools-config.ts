@@ -24,8 +24,8 @@ export class AIToolsConfigService extends Service {
       createSignalFromObservable<AIToolsConfig>(this.config$, {
         searchWorkspace: true,
         readingDocs: true,
-        canliiSearch: false,
-        a2ajSearch: false,
+        canliiSearch: true,
+        a2ajSearch: true,
       });
     this.config = signal;
     this.disposables.push(enabledCleanup);
@@ -42,8 +42,8 @@ export class AIToolsConfigService extends Service {
     map(config => ({
       searchWorkspace: config?.searchWorkspace ?? true,
       readingDocs: config?.readingDocs ?? true,
-      canliiSearch: config?.canliiSearch ?? false,
-      a2ajSearch: config?.a2ajSearch ?? false,
+      canliiSearch: config?.canliiSearch ?? true,
+      a2ajSearch: config?.a2ajSearch ?? true,
     }))
   );
 

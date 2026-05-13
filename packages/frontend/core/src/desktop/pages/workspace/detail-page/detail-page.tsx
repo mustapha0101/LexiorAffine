@@ -50,6 +50,7 @@ import {
   PropertyIcon,
   TocIcon,
   TodayIcon,
+  GridIcon,
 } from '@blocksuite/icons/rc';
 import {
   FrameworkScope,
@@ -73,6 +74,7 @@ import { EditorChatPanel } from './tabs/chat';
 import { EditorFramePanel } from './tabs/frame';
 import { EditorJournalPanel } from './tabs/journal';
 import { EditorOutlinePanel } from './tabs/outline';
+import { EditorStudioPanel } from './tabs/studio';
 
 const DetailPageImpl = memo(function DetailPageImpl() {
   const {
@@ -379,6 +381,16 @@ const DetailPageImpl = memo(function DetailPageImpl() {
           unmountOnInactive={false}
         >
           <EditorChatPanel editor={editorContainer} />
+        </ViewSidebarTab>
+      )}
+
+      {enableAI && (
+        <ViewSidebarTab
+          tabId="studio"
+          icon={<GridIcon />}
+          unmountOnInactive={false}
+        >
+          <EditorStudioPanel editor={editorContainer} />
         </ViewSidebarTab>
       )}
 

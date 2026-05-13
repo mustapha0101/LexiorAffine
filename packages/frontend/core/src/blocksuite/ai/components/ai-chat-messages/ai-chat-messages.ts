@@ -241,7 +241,7 @@ export class AIChatMessages extends WithDisposable(ShadowlessElement) {
             config => {
               return html`<div
                 data-testid=${config.testId}
-                @click=${() => config.handler()}
+                @click=${() => config.handler(this.host)}
                 class="onboarding-item"
               >
                 <div class="onboarding-item-icon">${config.icon}</div>

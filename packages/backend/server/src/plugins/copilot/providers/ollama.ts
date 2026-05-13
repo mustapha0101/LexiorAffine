@@ -1,12 +1,14 @@
 import { CopilotProviderSideError, metrics } from '../../../base';
 import {
   llmDispatchStream,
+  llmStructuredDispatch,
   type NativeLlmBackendConfig,
   type NativeLlmRequest,
+  type NativeLlmStructuredRequest,
 } from '../../../native';
 import type { NodeTextMiddleware } from '../config';
 import type { CopilotToolSet } from '../tools';
-import { buildNativeRequest, NativeProviderAdapter } from './native';
+import { buildNativeRequest, NativeProviderAdapter, buildNativeStructuredRequest, parseNativeStructuredOutput } from './native';
 import { CopilotProvider } from './provider';
 import {
   CopilotChatOptions,
@@ -17,6 +19,7 @@ import {
   ModelOutputType,
   PromptMessage,
   StreamObject,
+  CopilotStructuredOptions,
 } from './types';
 
 export type OllamaConfig = {
@@ -67,7 +70,7 @@ export class OllamaProvider extends CopilotProvider<OllamaConfig> {
               capabilities: [
                 {
                   input: [ModelInputType.Text],
-                  output: [ModelOutputType.Text, ModelOutputType.Object],
+                  output: [ModelOutputType.Text, ModelOutputType.Object, ModelOutputType.Structured],
                 },
               ],
             });
@@ -233,6 +236,50 @@ export class OllamaProvider extends CopilotProvider<OllamaConfig> {
     } catch (e: any) {
       metrics.ai
         .counter('chat_object_stream_errors')
+        .add(1, this.metricLabels(model.id));
+      throw this.handleError(e);
+    }
+  }
+
+  protected createNativeStructuredDispatch(
+    backendConfig: NativeLlmBackendConfig
+  ) {
+    return (request: NativeLlmStructuredRequest) =>
+      llmStructuredDispatch('openai_chat', backendConfig, request);
+  }
+
+  override async structure(
+    cond: ModelConditions,
+    messages: PromptMessage[],
+    options: CopilotStructuredOptions = {}
+  ): Promise<string> {
+    const fullCond = { ...cond, outputType: ModelOutputType.Structured };
+    const normalizedCond = await this.checkParams({
+      messages,
+      cond: fullCond,
+      options,
+    });
+    const model = this.selectModel(normalizedCond);
+
+    try {
+      metrics.ai.counter('chat_text_calls').add(1, this.metricLabels(model.id));
+      const backendConfig = this.createNativeConfig();
+      const middleware = this.getActiveProviderMiddleware();
+      const { request, schema } = await buildNativeStructuredRequest({
+        model: model.id,
+        messages,
+        options,
+        responseSchema: options.schema,
+        middleware,
+      });
+      const response =
+        await this.createNativeStructuredDispatch(backendConfig)(request);
+      const parsed = parseNativeStructuredOutput(response);
+      const validated = schema.parse(parsed);
+      return JSON.stringify(validated);
+    } catch (e: any) {
+      metrics.ai
+        .counter('chat_text_errors')
         .add(1, this.metricLabels(model.id));
       throw this.handleError(e);
     }

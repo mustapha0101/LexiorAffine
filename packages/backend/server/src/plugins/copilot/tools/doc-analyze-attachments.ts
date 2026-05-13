@@ -30,7 +30,7 @@ export const createDocAnalyzeAttachmentsTool = (
         if (!attachments || attachments.length === 0) {
            return {
               status: 'No attachments found',
-              message: `No attachments were found in document ${doc_id}.`
+              message: `TELL THE USER EXACTLY THIS: "Erreur de synchronisation : Le serveur n'a détecté aucune pièce jointe dans ce document (doc_id: ${doc_id}). Il se peut que le document ne soit pas encore sauvegardé sur le serveur backend. J'ai examiné ${blocks.length} blocs au total."`
            };
         }
 
@@ -41,74 +41,138 @@ export const createDocAnalyzeAttachmentsTool = (
 
         const intermediateResults: { fileName: string; summary: string }[] = [];
 
-        // Map Phase
-        for (const attachment of attachments) {
-           const blobId = attachment.additional?.blobId ?? attachment.additional?.sourceId ?? attachment.blob?.[0];
-           const fileName = attachment.additional?.name ?? attachment.additional?.title ?? 'document.pdf';
-           
-           if (!blobId) {
-             intermediateResults.push({ fileName, summary: `No blob ID found for this attachment. Debug info: ${JSON.stringify({ additional: attachment.additional, blob: attachment.blob })}` });
-             continue;
-           }
+         // Map Phase
+         for (const attachment of attachments) {
+            const blobId = attachment.additional?.blobId ?? attachment.additional?.sourceId ?? attachment.blob?.[0];
+            const fileName = attachment.additional?.name ?? attachment.additional?.title ?? 'document.pdf';
+            
+            if (!blobId) {
+              intermediateResults.push({ fileName, summary: `No blob ID found for this attachment. Debug info: ${JSON.stringify({ additional: attachment.additional, blob: attachment.blob })}` });
+              continue;
+            }
 
-           let text = await getBlobContent(blobId);
-           const mapMessages: PromptMessage[] = [];
+            let extractedText = await getBlobContent(blobId);
+            const rawBuffer = await getBlobRaw(blobId);
 
-           if (!text || text.trim() === '') {
-             const rawBuffer = await getBlobRaw(blobId);
-             if (!rawBuffer) {
-               intermediateResults.push({ fileName, summary: 'No extracted text or raw file data found for this attachment.' });
-               continue;
-             }
-             
-             const ext = fileName.split('.').pop()?.toLowerCase();
-             let parsedFallbackText: string | null = null;
-             
-             if (ext === 'md' || ext === 'txt' || ext === 'csv' || ext === 'json') {
-               parsedFallbackText = rawBuffer.toString('utf-8');
-             } else if (ext === 'xlsx' || ext === 'pptx' || ext === 'docx' || ext === 'pdf' || ext === 'odt' || ext === 'odp' || ext === 'ods') {
-               try {
-                 const { parseOffice } = await import('officeparser');
-                 const ast = await parseOffice(rawBuffer);
-                 parsedFallbackText = ast.toText();
-               } catch (err: any) {
-                 logger.warn(`Could not parse ${ext} file cleanly. Error or missing officeparser: ${err.message}. Please install officeparser.`);
-               }
-             }
+            if ((!extractedText || extractedText.trim() === '') && rawBuffer) {
+              const ext = fileName.split('.').pop()?.toLowerCase();
+              if (ext === 'md' || ext === 'txt' || ext === 'csv' || ext === 'json') {
+                extractedText = rawBuffer.toString('utf-8');
+              } else if (ext === 'pdf') {
+                try {
+                  const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs');
+                  const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(rawBuffer) });
+                  const pdfDocument = await loadingTask.promise;
+                  let fullText = '';
+                  for (let i = 1; i <= pdfDocument.numPages; i++) {
+                    const page = await pdfDocument.getPage(i);
+                    const textContent = await page.getTextContent();
+                    fullText += textContent.items.map((s: any) => s.str).join(' ') + '\n';
+                  }
+                  extractedText = fullText;
+                  
+                  // OCR FALLBACK
+                  if (!extractedText || extractedText.trim() === '') {
+                    console.log(`DocAnalyze: No text found in ${fileName}, starting OCR...`);
+                    try {
+                      const pdf2img = require('pdf-img-convert');
+                      const Tesseract = require('tesseract.js');
+                      const imageBuffers = await pdf2img.convert(rawBuffer, { scale: 2.0 });
+                      let ocrText = '';
+                      for (let i = 0; i < imageBuffers.length; i++) {
+                        const { data: { text } } = await Tesseract.recognize(imageBuffers[i], 'fra');
+                        ocrText += text + '\n\n';
+                      }
+                      extractedText = ocrText;
+                      console.log(`DocAnalyze: OCR completed for ${fileName}`);
+                    } catch (ocrErr: any) {
+                      console.error(`DocAnalyze: OCR Failed for ${fileName}`, ocrErr);
+                      extractedText = "PDF PARSING SUCCESSFUL BUT NO TEXT FOUND (SCANNED PDF) AND OCR FAILED.";
+                    }
+                  }
+                } catch (err: any) {
+                  extractedText = `PDF PARSING ERROR: ${err.message}\n${err.stack}`;
+                }
+              } else if (ext === 'xlsx' || ext === 'pptx' || ext === 'docx' || ext === 'odt' || ext === 'odp' || ext === 'ods') {
+                try {
+                  const { parseOffice } = await import('officeparser');
+                  const parsedResult = await parseOffice(rawBuffer);
+                  if (typeof parsedResult === 'string') {
+                    extractedText = parsedResult;
+                  } else if (parsedResult && typeof (parsedResult as any).toText === 'function') {
+                    extractedText = (parsedResult as any).toText();
+                  } else {
+                    extractedText = String(parsedResult);
+                  }
+                } catch (err: any) {
+                  logger.warn(`Could not parse ${ext} file cleanly. Error or missing officeparser: ${err.message}. Please install officeparser.`);
+                }
+              }
+            }
 
-             if (parsedFallbackText && parsedFallbackText.trim() !== '') {
-               mapMessages.push(
-                 { role: 'system', content: 'You are a meticulous data extraction agent. Analyze the provided document text and extract all details relevant to the user query. Be highly precise and do not miss any details.' },
-                 { role: 'user', content: `User Query: ${query}\n\nDocument Filename: ${fileName}\n\nText Content:\n${parsedFallbackText}` }
-               );
-             } else {
-               let mimeType = 'application/pdf'; // Default to PDF to prevent model rejection
-               if (ext === 'docx') mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-               else if (ext === 'xlsx') mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-               else if (ext === 'md' || ext === 'txt') mimeType = 'text/plain';
-               else if (ext === 'png') mimeType = 'image/png';
-               else if (ext === 'jpg' || ext === 'jpeg') mimeType = 'image/jpeg';
+            try {
+              if (extractedText && extractedText.trim() !== '') {
+                // We have text! Chunk it.
+                const chunkSize = 8000;
+                const overlap = 500;
+                const chunks: string[] = [];
+                for (let i = 0; i < extractedText.length; i += (chunkSize - overlap)) {
+                  chunks.push(extractedText.substring(i, Math.min(i + chunkSize, extractedText.length)));
+                  if (i + chunkSize >= extractedText.length) break;
+                }
 
-               mapMessages.push(
-                 { role: 'system', content: 'You are a meticulous data extraction agent. Analyze the attached document and extract all details relevant to the user query. Be highly precise and do not miss any details.' },
-                 { role: 'user', content: `User Query: ${query}\n\nDocument Filename: ${fileName}`, attachments: [{ kind: 'bytes', data: rawBuffer.toString('base64'), mimeType }] }
-               );
-             }
-           } else {
-             mapMessages.push(
-               { role: 'system', content: 'You are a meticulous data extraction agent. Analyze the provided document text and extract all details relevant to the user query. Be highly precise and do not miss any details.' },
-               { role: 'user', content: `User Query: ${query}\n\nDocument Filename: ${fileName}\n\nText Content:\n${text}` }
-             );
-           }
+                const chunkSummaries: string[] = [];
+                const batchSize = 3;
+                for (let i = 0; i < chunks.length; i += batchSize) {
+                  const batch = chunks.slice(i, i + batchSize);
+                  const batchResults = await Promise.all(batch.map(async (chunk, idx) => {
+                    const chunkIndex = i + idx + 1;
+                    const mapMessages: PromptMessage[] = [
+                      { role: 'system', content: 'You are a meticulous data extraction agent. Analyze the provided document text chunk and extract all details relevant to the user query. Be highly precise and do not miss any details.' },
+                      { role: 'user', content: `User Query: ${query}\n\nDocument Filename: ${fileName} (Chunk ${chunkIndex} of ${chunks.length})\n\nText Content:\n${chunk}` }
+                    ];
+                    return provider.text({ modelId: model }, mapMessages);
+                  }));
+                  chunkSummaries.push(...batchResults);
+                }
 
-           try {
-             const mapResult = await provider.text({ modelId: model }, mapMessages);
-             intermediateResults.push({ fileName, summary: mapResult });
-           } catch (e: any) {
-             logger.error(`Failed to analyze attachment ${fileName} (${blobId})`, e);
-             intermediateResults.push({ fileName, summary: `Error analyzing file: ${e.message}` });
-           }
-        }
+                if (chunkSummaries.length === 1) {
+                  intermediateResults.push({ fileName, summary: chunkSummaries[0] });
+                } else {
+                  // File-level reduce
+                  const fileReduceMessages: PromptMessage[] = [
+                    { role: 'system', content: 'You are an intelligent synthesis agent. Synthesize the chunked extractions of this document into a comprehensive file summary that answers the user query.' },
+                    { role: 'user', content: `User Query: ${query}\n\nDocument Filename: ${fileName}\n\nChunk Summaries:\n${chunkSummaries.map((s, i) => `--- Chunk ${i + 1} ---\n${s}`).join('\n\n')}` }
+                  ];
+                  const fileSummary = await provider.text({ modelId: model }, fileReduceMessages);
+                  intermediateResults.push({ fileName, summary: fileSummary });
+                }
+
+              } else if (rawBuffer) {
+                // Binary attachment (e.g., image)
+                const ext = fileName.split('.').pop()?.toLowerCase();
+                let mimeType = 'application/pdf'; // Default to PDF to prevent model rejection
+                if (ext === 'docx') mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                else if (ext === 'xlsx') mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                else if (ext === 'md' || ext === 'txt') mimeType = 'text/plain';
+                else if (ext === 'png') mimeType = 'image/png';
+                else if (ext === 'jpg' || ext === 'jpeg') mimeType = 'image/jpeg';
+
+                const mapMessages: PromptMessage[] = [
+                  { role: 'system', content: 'You are a meticulous data extraction agent. Analyze the attached document and extract all details relevant to the user query. Be highly precise and do not miss any details.' },
+                  { role: 'user', content: `User Query: ${query}\n\nDocument Filename: ${fileName}`, attachments: [{ kind: 'bytes', data: rawBuffer.toString('base64'), mimeType }] }
+                ];
+                const mapResult = await provider.text({ modelId: model }, mapMessages);
+                intermediateResults.push({ fileName, summary: mapResult });
+              } else {
+                logger.warn(`Missing blob buffer for attachment ${fileName} (blobId: ${blobId})`);
+                intermediateResults.push({ fileName, summary: `TELL THE USER EXACTLY THIS: "Le document binaire n'est pas encore synchronisé sur le serveur. Veuillez patienter quelques secondes pour l'upload ou vérifier votre connexion."` });
+              }
+            } catch (err: any) {
+              logger.error(`Error processing attachment ${fileName}: ${err.message}`, err.stack);
+              intermediateResults.push({ fileName, summary: `TELL THE USER EXACTLY THIS: "Erreur interne lors du traitement du fichier ${fileName}: ${err.message}"` });
+            }
+         }
 
         // Reduce Phase
         const reduceMessages: PromptMessage[] = [

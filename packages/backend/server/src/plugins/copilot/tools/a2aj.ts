@@ -54,13 +54,13 @@ async function executeA2ajCall(method: string, params: any) {
     const textRes = await res.text();
     
     // The response is an SSE event stream: "event: message\ndata: {...}"
-    // We can extract the data JSON string.
-    const match = textRes.match(/data: (.*)/);
-    if (!match) {
+    const lines = textRes.split('\n');
+    const dataLine = lines.find(l => l.startsWith('data: '));
+    if (!dataLine) {
       throw new Error('Invalid response format from A2AJ server.');
     }
 
-    const json = JSON.parse(match[1]);
+    const json = JSON.parse(dataLine.substring(6));
     
     if (json.error) {
       throw new Error(json.error.message);
@@ -106,9 +106,13 @@ export function createA2ajFetchDocumentTool() {
     }),
     execute: async (args: any) => {
       try {
+        if ('search_language' in args) delete args.search_language;
         const result = await executeA2ajCall('fetch_document', args);
         return result;
       } catch (e: any) {
+        if (e.message.includes('fetch failed') || e.message.includes('ECONNRESET')) {
+          return toolError('A2AJ Fetch Document Failed', "Network error or invalid citation causing connection drop. Please ensure your citation format is exact (e.g., 'RSC 1985, c C-46', not 'c-46').");
+        }
         return toolError('A2AJ Fetch Document Failed', e.message);
       }
     },
@@ -119,7 +123,7 @@ export function createA2ajSearchLegalDocumentsTool() {
   return defineTool({
     description: "Search Canadian case law and legislation. Use this for any Canadian legal research instead of web search.",
     inputSchema: z.object({
-      query: z.string().describe("Search query. Supports boolean operators (AND/OR/NOT), quotes, wildcards (*), proximity ('A B'~n)"),
+      query: z.string().describe("MUST BE A KEYWORD SEARCH. DO NOT USE NATURAL LANGUAGE. Supports boolean operators (AND/OR/NOT), quotes, wildcards (*), proximity ('A B'~n)"),
       search_type: z.enum(['full_text', 'name']).default('full_text').describe("'full_text' searches document content with snippets, 'name' searches titles only"),
       doc_type: z.enum(['cases', 'laws']).default('cases').describe("'cases' for Canadian case law, 'laws' for statutes & regulations"),
       size: z.number().optional().describe("Number of results to return (max 50)"),
@@ -131,6 +135,8 @@ export function createA2ajSearchLegalDocumentsTool() {
     }),
     execute: async (args: any) => {
       try {
+        if ('output_language' in args) delete args.output_language;
+        if (args.search_language === 'both') args.search_language = 'en';
         const result = await executeA2ajCall('search_legal_documents', args);
         return result;
       } catch (e: any) {
