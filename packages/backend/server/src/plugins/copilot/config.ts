@@ -272,6 +272,7 @@ defineModuleConfig('copilot', {
         quick_decision_making: 'qwen3:8b',
         quick_text_generation: 'qwen3:8b',
         polish_and_summarize: 'qwen3:8b',
+        studio: 'qwen3:8b',
       } : {
         audio_transcribing: 'gemini-2.5-flash',
         chat: 'gemini-2.5-flash',
@@ -282,6 +283,7 @@ defineModuleConfig('copilot', {
         quick_decision_making: 'gpt-5-mini',
         quick_text_generation: 'gemini-2.5-flash',
         polish_and_summarize: 'gemini-2.5-flash',
+        studio: 'gpt-4o',
       },
     },
   },

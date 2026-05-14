@@ -476,6 +476,8 @@ type Copilot {
   """Get the context list of a session"""
   contexts(contextId: String, sessionId: String): [CopilotContext!]!
   documentIrac(blobId: String, jobId: String): IracResultType
+  documentStudio(blobId: String, jobId: String): StudioResultType
+  documentStudioJobs: [StudioResultType!]!
   histories(docId: String, options: QueryChatHistoriesInput): [CopilotHistories!]! @deprecated(reason: "use `chats` instead")
 
   """List available models for a prompt, with human-readable names"""
@@ -1536,6 +1538,7 @@ type Mutation {
   changePassword(newPassword: String!, token: String!, userId: String): Boolean!
   claimAudioTranscription(jobId: String!): TranscriptionResultType
   claimDocumentIrac(jobId: String!): IracResultType
+  claimStudioJob(jobId: String!): StudioResultType
 
   """Cleanup sessions"""
   cleanupCopilotSession(options: DeleteSessionInput!): [String!]!
@@ -1581,6 +1584,7 @@ type Mutation {
 
   """Delete a reply"""
   deleteReply(id: String!): Boolean!
+  deleteStudioJob(jobId: String!, workspaceId: String!): Boolean!
 
   """Delete a user account"""
   deleteUser(id: String!): DeleteAccount!
@@ -1662,6 +1666,7 @@ type Mutation {
   setBlob(blob: Upload!, workspaceId: String!): String!
   submitAudioTranscription(blob: Upload, blobId: String!, blobs: [Upload!], input: SubmitAudioTranscriptionInput, workspaceId: String!): TranscriptionResultType
   submitDocumentIrac(blobId: String!, type: String, workspaceId: String!): IracResultType
+  submitStudioJob(actionType: String!, blobId: String!, scope: String!, workspaceId: String!): StudioResultType
 
   """Trigger cleanup of trashed doc embeddings"""
   triggerCleanupTrashedDocEmbeddings: Boolean!
@@ -2268,6 +2273,14 @@ type StreamObject {
   toolCallId: String
   toolName: String
   type: String!
+}
+
+type StudioResultType {
+  actionType: String
+  id: ID!
+  scope: String
+  status: AiJobStatus!
+  summary: String
 }
 
 input SubmitAudioTranscriptionInput {

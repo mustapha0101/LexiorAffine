@@ -535,6 +535,8 @@ export interface Copilot {
   chats: PaginatedCopilotHistoriesType;
   /** Get the context list of a session */
   contexts: Array<CopilotContext>;
+  documentIrac: Maybe<IracResultType>;
+  documentStudio: Maybe<StudioResultType>;
   /** @deprecated use `chats` instead */
   histories: Array<CopilotHistories>;
   /** List available models for a prompt, with human-readable names */
@@ -565,6 +567,16 @@ export interface CopilotChatsArgs {
 export interface CopilotContextsArgs {
   contextId?: InputMaybe<Scalars['String']['input']>;
   sessionId?: InputMaybe<Scalars['String']['input']>;
+}
+
+export interface CopilotDocumentIracArgs {
+  blobId?: InputMaybe<Scalars['String']['input']>;
+  jobId?: InputMaybe<Scalars['String']['input']>;
+}
+
+export interface CopilotDocumentStudioArgs {
+  blobId?: InputMaybe<Scalars['String']['input']>;
+  jobId?: InputMaybe<Scalars['String']['input']>;
 }
 
 export interface CopilotHistoriesArgs {
@@ -1575,6 +1587,16 @@ export interface InvoiceType {
   updatedAt: Scalars['DateTime']['output'];
 }
 
+export interface IracResultType {
+  __typename?: 'IracResultType';
+  application: Maybe<Scalars['String']['output']>;
+  conclusion: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  issue: Maybe<Scalars['String']['output']>;
+  rule: Maybe<Scalars['String']['output']>;
+  status: AiJobStatus;
+}
+
 export interface License {
   __typename?: 'License';
   expiredAt: Maybe<Scalars['DateTime']['output']>;
@@ -1736,6 +1758,8 @@ export interface Mutation {
   changeEmail: UserType;
   changePassword: Scalars['Boolean']['output'];
   claimAudioTranscription: Maybe<TranscriptionResultType>;
+  claimDocumentIrac: Maybe<IracResultType>;
+  claimStudioJob: Maybe<StudioResultType>;
   /** Cleanup sessions */
   cleanupCopilotSession: Array<Scalars['String']['output']>;
   completeBlobUpload: Scalars['String']['output'];
@@ -1835,6 +1859,8 @@ export interface Mutation {
   sendVerifyEmail: Scalars['Boolean']['output'];
   setBlob: Scalars['String']['output'];
   submitAudioTranscription: Maybe<TranscriptionResultType>;
+  submitDocumentIrac: Maybe<IracResultType>;
+  submitStudioJob: Maybe<StudioResultType>;
   /** Trigger cleanup of trashed doc embeddings */
   triggerCleanupTrashedDocEmbeddings: Scalars['Boolean']['output'];
   /** Trigger generate missing titles cron job */
@@ -1953,6 +1979,14 @@ export interface MutationChangePasswordArgs {
 }
 
 export interface MutationClaimAudioTranscriptionArgs {
+  jobId: Scalars['String']['input'];
+}
+
+export interface MutationClaimDocumentIracArgs {
+  jobId: Scalars['String']['input'];
+}
+
+export interface MutationClaimStudioJobArgs {
   jobId: Scalars['String']['input'];
 }
 
@@ -2241,6 +2275,19 @@ export interface MutationSubmitAudioTranscriptionArgs {
   blobId: Scalars['String']['input'];
   blobs?: InputMaybe<Array<Scalars['Upload']['input']>>;
   input?: InputMaybe<SubmitAudioTranscriptionInput>;
+  workspaceId: Scalars['String']['input'];
+}
+
+export interface MutationSubmitDocumentIracArgs {
+  blobId: Scalars['String']['input'];
+  type?: InputMaybe<Scalars['String']['input']>;
+  workspaceId: Scalars['String']['input'];
+}
+
+export interface MutationSubmitStudioJobArgs {
+  actionType: Scalars['String']['input'];
+  blobId: Scalars['String']['input'];
+  scope: Scalars['String']['input'];
   workspaceId: Scalars['String']['input'];
 }
 
@@ -2956,6 +3003,15 @@ export interface StreamObject {
   toolCallId: Maybe<Scalars['String']['output']>;
   toolName: Maybe<Scalars['String']['output']>;
   type: Scalars['String']['output'];
+}
+
+export interface StudioResultType {
+  __typename?: 'StudioResultType';
+  actionType: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  scope: Maybe<Scalars['String']['output']>;
+  status: AiJobStatus;
+  summary: Maybe<Scalars['String']['output']>;
 }
 
 export interface SubmitAudioTranscriptionInput {
@@ -5265,6 +5321,61 @@ export type GetCopilotHistoriesQuery = {
   } | null;
 };
 
+export type SubmitDocumentIracMutationVariables = Exact<{
+  workspaceId: Scalars['String']['input'];
+  blobId: Scalars['String']['input'];
+}>;
+
+export type SubmitDocumentIracMutation = {
+  __typename?: 'Mutation';
+  submitDocumentIrac: {
+    __typename?: 'IracResultType';
+    id: string;
+    status: AiJobStatus;
+  } | null;
+};
+
+export type ClaimDocumentIracMutationVariables = Exact<{
+  jobId: Scalars['String']['input'];
+}>;
+
+export type ClaimDocumentIracMutation = {
+  __typename?: 'Mutation';
+  claimDocumentIrac: {
+    __typename?: 'IracResultType';
+    id: string;
+    status: AiJobStatus;
+    issue: string | null;
+    rule: string | null;
+    application: string | null;
+    conclusion: string | null;
+  } | null;
+};
+
+export type DocumentIracQueryVariables = Exact<{
+  jobId?: InputMaybe<Scalars['String']['input']>;
+  blobId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+export type DocumentIracQuery = {
+  __typename?: 'Query';
+  currentUser: {
+    __typename?: 'UserType';
+    copilot: {
+      __typename?: 'Copilot';
+      documentIrac: {
+        __typename?: 'IracResultType';
+        id: string;
+        status: AiJobStatus;
+        issue: string | null;
+        rule: string | null;
+        application: string | null;
+        conclusion: string | null;
+      } | null;
+    };
+  } | null;
+};
+
 export type SubmitAudioTranscriptionMutationVariables = Exact<{
   workspaceId: Scalars['String']['input'];
   blobId: Scalars['String']['input'];
@@ -5825,6 +5936,64 @@ export type GetCopilotSessionsQuery = {
           };
         }>;
       };
+    };
+  } | null;
+};
+
+export type SubmitStudioJobMutationVariables = Exact<{
+  workspaceId: Scalars['String']['input'];
+  blobId: Scalars['String']['input'];
+  actionType: Scalars['String']['input'];
+  scope: Scalars['String']['input'];
+}>;
+
+export type SubmitStudioJobMutation = {
+  __typename?: 'Mutation';
+  submitStudioJob: {
+    __typename?: 'StudioResultType';
+    id: string;
+    status: AiJobStatus;
+    actionType: string | null;
+    scope: string | null;
+    summary: string | null;
+  } | null;
+};
+
+export type ClaimStudioJobMutationVariables = Exact<{
+  jobId: Scalars['String']['input'];
+}>;
+
+export type ClaimStudioJobMutation = {
+  __typename?: 'Mutation';
+  claimStudioJob: {
+    __typename?: 'StudioResultType';
+    id: string;
+    status: AiJobStatus;
+    actionType: string | null;
+    scope: string | null;
+    summary: string | null;
+  } | null;
+};
+
+export type GetStudioJobQueryVariables = Exact<{
+  jobId?: InputMaybe<Scalars['String']['input']>;
+  blobId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+export type GetStudioJobQuery = {
+  __typename?: 'Query';
+  currentUser: {
+    __typename?: 'UserType';
+    copilot: {
+      __typename?: 'Copilot';
+      documentStudio: {
+        __typename?: 'StudioResultType';
+        id: string;
+        status: AiJobStatus;
+        actionType: string | null;
+        scope: string | null;
+        summary: string | null;
+      } | null;
     };
   } | null;
 };
@@ -7842,6 +8011,11 @@ export type Queries =
       response: GetCopilotHistoriesQuery;
     }
   | {
+      name: 'documentIracQuery';
+      variables: DocumentIracQueryVariables;
+      response: DocumentIracQuery;
+    }
+  | {
       name: 'getAudioTranscriptionQuery';
       variables: GetAudioTranscriptionQueryVariables;
       response: GetAudioTranscriptionQuery;
@@ -7875,6 +8049,11 @@ export type Queries =
       name: 'getCopilotSessionsQuery';
       variables: GetCopilotSessionsQueryVariables;
       response: GetCopilotSessionsQuery;
+    }
+  | {
+      name: 'getStudioJobQuery';
+      variables: GetStudioJobQueryVariables;
+      response: GetStudioJobQuery;
     }
   | {
       name: 'getWorkspaceEmbeddingFilesQuery';
@@ -8349,6 +8528,16 @@ export type Mutations =
       response: QueueWorkspaceEmbeddingMutation;
     }
   | {
+      name: 'submitDocumentIracMutation';
+      variables: SubmitDocumentIracMutationVariables;
+      response: SubmitDocumentIracMutation;
+    }
+  | {
+      name: 'claimDocumentIracMutation';
+      variables: ClaimDocumentIracMutationVariables;
+      response: ClaimDocumentIracMutation;
+    }
+  | {
       name: 'submitAudioTranscriptionMutation';
       variables: SubmitAudioTranscriptionMutationVariables;
       response: SubmitAudioTranscriptionMutation;
@@ -8392,6 +8581,16 @@ export type Mutations =
       name: 'updateCopilotSessionMutation';
       variables: UpdateCopilotSessionMutationVariables;
       response: UpdateCopilotSessionMutation;
+    }
+  | {
+      name: 'submitStudioJobMutation';
+      variables: SubmitStudioJobMutationVariables;
+      response: SubmitStudioJobMutation;
+    }
+  | {
+      name: 'claimStudioJobMutation';
+      variables: ClaimStudioJobMutationVariables;
+      response: ClaimStudioJobMutation;
     }
   | {
       name: 'addWorkspaceEmbeddingFilesMutation';

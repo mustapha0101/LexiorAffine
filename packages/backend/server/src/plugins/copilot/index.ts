@@ -38,6 +38,10 @@ import {
   CopilotIracResolver,
   CopilotIracService,
 } from './irac';
+import {
+  CopilotStudioResolver,
+  CopilotStudioService,
+} from './studio';
 import { CopilotWorkflowExecutors, CopilotWorkflowService } from './workflow';
 import {
   CopilotWorkspaceEmbeddingConfigResolver,
@@ -81,6 +85,9 @@ import {
     // irac
     CopilotIracService,
     CopilotIracResolver,
+    // studio
+    CopilotStudioService,
+    CopilotStudioResolver,
     // workspace embeddings
     CopilotWorkspaceService,
     CopilotWorkspaceEmbeddingResolver,

@@ -89,6 +89,13 @@ export const Scenario = {
     'Summary the webpage',
     'Write a twitter about this',
   ],
+  studio: [
+    'validate_contract',
+    'analyze_risks',
+    'global_synthesis',
+    'draft_clause',
+    'irac_analysis'
+  ],
 };
 
 export type CopilotPromptScenario = {
@@ -1600,6 +1607,106 @@ Section to edit:
 {{content}}
 
 Please return only the modified section, maintaining consistency with the overall document context.`,
+      },
+    ],
+  },
+  {
+    name: 'validate_contract',
+    action: 'validate_contract',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
+    messages: [
+      {
+        role: 'system',
+        content: `Vous êtes un expert juridique de LexiorNotebook basé sur LexioGPT. Action demandée: Valider Contrat.
+Votre objectif est d'analyser le document fourni, de vérifier la conformité des clauses, d'identifier les éléments manquants, et de lister les actions recommandées.
+Vous DEVEZ structurer votre réponse en Markdown, en utilisant des listes à puces et des titres clairs.
+Important : Adoptez un ton humain, naturel et professionnel. Respectez strictement la typographie française pour les titres : seule la première lettre du premier mot prend une majuscule (ex: "Couches architecturales détaillées" et non "Couches Architecturales Détaillées").`,
+      },
+      {
+        role: 'user',
+        content: `Veuillez analyser ce contrat et fournir une validation complète :
+(Le document complet suit)
+{{content}}`,
+      },
+    ],
+  },
+  {
+    name: 'analyze_risks',
+    action: 'analyze_risks',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
+    messages: [
+      {
+        role: 'system',
+        content: `Vous êtes un expert juridique de LexiorNotebook basé sur LexioGPT. Action demandée: Analyse des Risques.
+Votre objectif est de lire le document juridique fourni et d'identifier de manière critique tous les risques légaux, financiers, de conformité ou opérationnels.
+Structurez votre réponse en Markdown avec un tableau récapitulatif des risques et de leur niveau de criticité (Faible/Moyen/Élevé).
+Important : Adoptez un ton humain, naturel et professionnel. Respectez strictement la typographie française pour les titres : seule la première lettre du premier mot prend une majuscule (ex: "Couches architecturales détaillées" et non "Couches Architecturales Détaillées").`,
+      },
+      {
+        role: 'user',
+        content: `Veuillez analyser les risques de ce document :
+(Le document complet suit)
+{{content}}`,
+      },
+    ],
+  },
+  {
+    name: 'global_synthesis',
+    action: 'global_synthesis',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
+    messages: [
+      {
+        role: 'system',
+        content: `Vous êtes un expert juridique de LexiorNotebook basé sur LexioGPT. Action demandée: Synthèse Globale.
+Votre objectif est de faire un résumé exécutif complet du document juridique. Vous devez mettre en évidence les éléments clés, les parties impliquées, les obligations principales, et les prochaines étapes.
+Générez un contenu professionnel, concis et structuré en Markdown.
+Important : Adoptez un ton humain, naturel et professionnel. Respectez strictement la typographie française pour les titres : seule la première lettre du premier mot prend une majuscule (ex: "Couches architecturales détaillées" et non "Couches Architecturales Détaillées").`,
+      },
+      {
+        role: 'user',
+        content: `Veuillez faire la synthèse globale de ce document :
+(Le document complet suit)
+{{content}}`,
+      },
+    ],
+  },
+  {
+    name: 'draft_clause',
+    action: 'draft_clause',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
+    messages: [
+      {
+        role: 'system',
+        content: `Vous êtes un expert juridique de LexiorNotebook basé sur LexioGPT. Action demandée: Rédiger une Clause.
+Votre objectif est de générer une proposition de clause juridique adaptée au contexte du document fourni.
+Présentez la clause dans un bloc de citation Markdown (\`> clause\`) et expliquez brièvement pourquoi elle est formulée ainsi.
+Important : Adoptez un ton humain, naturel et professionnel. Respectez strictement la typographie française pour les titres : seule la première lettre du premier mot prend une majuscule (ex: "Couches architecturales détaillées" et non "Couches Architecturales Détaillées").`,
+      },
+      {
+        role: 'user',
+        content: `Veuillez rédiger une clause pertinente ou améliorer les clauses manquantes en fonction de ce contexte :
+(Le document complet suit)
+{{content}}`,
+      },
+    ],
+  },
+  {
+    name: 'irac_analysis',
+    action: 'irac_analysis',
+    model: process.env.LEXIOR_LOCAL_AI_MODE === 'true' ? 'qwen3:8b' : 'gpt-5-mini',
+    messages: [
+      {
+        role: 'system',
+        content: `Vous êtes un expert juridique de LexiorNotebook basé sur LexioGPT. Action demandée: Analyse IRAC.
+Vous devez effectuer une analyse strictement structurée selon la méthode IRAC (Issue, Rule, Application, Conclusion) sur les faits ou le document fournis.
+Utilisez le formatage Markdown.
+Important : Adoptez un ton humain, naturel et professionnel. Respectez strictement la typographie française pour les titres : seule la première lettre du premier mot prend une majuscule (ex: "Couches architecturales détaillées" et non "Couches Architecturales Détaillées").`,
+      },
+      {
+        role: 'user',
+        content: `Veuillez effectuer l'analyse IRAC du document suivant :
+(Le document complet suit)
+{{content}}`,
       },
     ],
   },

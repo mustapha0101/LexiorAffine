@@ -1,0 +1,43 @@
+mutation submitStudioJob(
+  $workspaceId: String!
+  $blobId: String!
+  $actionType: String!
+  $scope: String!
+) {
+  submitStudioJob(
+    blobId: $blobId
+    workspaceId: $workspaceId
+    actionType: $actionType
+    scope: $scope
+  ) {
+    id
+    status
+    actionType
+    scope
+    summary
+  }
+}
+
+mutation claimStudioJob($jobId: String!) {
+  claimStudioJob(jobId: $jobId) {
+    id
+    status
+    actionType
+    scope
+    summary
+  }
+}
+
+query getStudioJob($jobId: String, $blobId: String) {
+  currentUser {
+    copilot {
+      documentStudio(jobId: $jobId, blobId: $blobId) {
+        id
+        status
+        actionType
+        scope
+        summary
+      }
+    }
+  }
+}

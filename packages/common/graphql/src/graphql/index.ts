@@ -1414,6 +1414,51 @@ export const getCopilotHistoriesQuery = {
 ${paginatedCopilotChatsFragment}`,
 };
 
+export const submitDocumentIracMutation = {
+  id: 'submitDocumentIracMutation' as const,
+  op: 'submitDocumentIrac',
+  query: `mutation submitDocumentIrac($workspaceId: String!, $blobId: String!) {
+  submitDocumentIrac(blobId: $blobId, workspaceId: $workspaceId) {
+    id
+    status
+  }
+}`,
+};
+
+export const claimDocumentIracMutation = {
+  id: 'claimDocumentIracMutation' as const,
+  op: 'claimDocumentIrac',
+  query: `mutation claimDocumentIrac($jobId: String!) {
+  claimDocumentIrac(jobId: $jobId) {
+    id
+    status
+    issue
+    rule
+    application
+    conclusion
+  }
+}`,
+};
+
+export const documentIracQuery = {
+  id: 'documentIracQuery' as const,
+  op: 'documentIrac',
+  query: `query documentIrac($jobId: String, $blobId: String) {
+  currentUser {
+    copilot {
+      documentIrac(jobId: $jobId, blobId: $blobId) {
+        id
+        status
+        issue
+        rule
+        application
+        conclusion
+      }
+    }
+  }
+}`,
+};
+
 export const submitAudioTranscriptionMutation = {
   id: 'submitAudioTranscriptionMutation' as const,
   op: 'submitAudioTranscription',
@@ -1725,6 +1770,57 @@ export const getCopilotSessionsQuery = {
   }
 }
 ${paginatedCopilotChatsFragment}`,
+};
+
+export const submitStudioJobMutation = {
+  id: 'submitStudioJobMutation' as const,
+  op: 'submitStudioJob',
+  query: `mutation submitStudioJob($workspaceId: String!, $blobId: String!, $actionType: String!, $scope: String!) {
+  submitStudioJob(
+    blobId: $blobId
+    workspaceId: $workspaceId
+    actionType: $actionType
+    scope: $scope
+  ) {
+    id
+    status
+    actionType
+    scope
+    summary
+  }
+}`,
+};
+
+export const claimStudioJobMutation = {
+  id: 'claimStudioJobMutation' as const,
+  op: 'claimStudioJob',
+  query: `mutation claimStudioJob($jobId: String!) {
+  claimStudioJob(jobId: $jobId) {
+    id
+    status
+    actionType
+    scope
+    summary
+  }
+}`,
+};
+
+export const getStudioJobQuery = {
+  id: 'getStudioJobQuery' as const,
+  op: 'getStudioJob',
+  query: `query getStudioJob($jobId: String, $blobId: String) {
+  currentUser {
+    copilot {
+      documentStudio(jobId: $jobId, blobId: $blobId) {
+        id
+        status
+        actionType
+        scope
+        summary
+      }
+    }
+  }
+}`,
 };
 
 export const addWorkspaceEmbeddingFilesMutation = {
