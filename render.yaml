@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: lexior-affine-server
+    env: docker
+    # Remplacez "mustapha0101" par votre nom d'utilisateur exact en minuscules si nécessaire
+    image:
+      url: ghcr.io/mustapha0101/lexioraffine:latest
+    disk:
+      name: affine-storage
+      mountPath: /root/.affine/storage
+      sizeGB: 5 # 5 Go pour commencer, ajustable selon le volume de documents
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: AFFINE_SERVER_URL
+        # Sera défini automatiquement par Render avec l'URL finale (ex: https://lexior-affine-server.onrender.com)
+        value: https://lexior-affine-server.onrender.com
+      - key: DATABASE_URL
+        fromDatabase:
+          name: lexior-affine-db
+          property: connectionString
+      - key: REDIS_SERVER_HOST
+        # L'adresse DNS interne de Render pointera directement vers l'instance Redis ci-dessous
+        value: lexior-affine-redis
+      - key: AFFINE_TELEMETRY_ENABLED
+        value: 'false'
+
+  - type: redis
+    name: lexior-affine-redis
+    ipAllowList: [] # Strictement interne, pas d'accès public
+
+databases:
+  - name: lexior-affine-db
+    databaseName: affine
+    user: affine_user
+    plan: starter # Forfait PostgreSQL recommandé par Render (7$/mois)

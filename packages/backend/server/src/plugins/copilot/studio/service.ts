@@ -7,6 +7,9 @@ import { CopilotProviderFactory } from '../providers/factory';
 import { ModelOutputType } from '../providers/types';
 import { StudioPayload, StudioSubmitInput } from './types';
 import { PromptService } from '../prompt';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { join } from 'path';
 
 export type StudioJob = {
   id: string;
@@ -89,14 +92,24 @@ export class CopilotStudioService {
     }
 
     // Trigger processing asynchronously
-    this.processJobAsync(job.id, workspaceId, input.scope, input.actionType).catch(e => {
+    this.processJobAsync(
+      job.id,
+      workspaceId,
+      input.scope,
+      input.actionType
+    ).catch(e => {
       this.logger.error(`Studio job ${job.id} failed`, e);
     });
 
     return { id: job.id, status: AiJobStatus.pending };
   }
 
-  private async processJobAsync(jobId: string, workspaceId: string, scope: 'document' | 'workspace', actionType: string) {
+  private async processJobAsync(
+    jobId: string,
+    workspaceId: string,
+    scope: 'document' | 'workspace',
+    actionType: string
+  ) {
     try {
       await this.prisma.aiJobs.update({
         where: { id: jobId },
@@ -108,47 +121,64 @@ export class CopilotStudioService {
       if (scope === 'document') {
         // Just extract the current document
         // Wait, blobId is stored as "workspace-scope:actionType" or "docId:actionType"
-        const fullBlobId = await this.prisma.aiJobs.findUnique({where: {id: jobId}}).then((j: any) => j?.blobId);
+        const fullBlobId = await this.prisma.aiJobs
+          .findUnique({ where: { id: jobId } })
+          .then((j: any) => j?.blobId);
         const docId = fullBlobId ? fullBlobId.split(':')[0] : null;
         if (docId && docId !== 'workspace-scope') {
-            this.logger.log(`[Studio] Calling getDocMarkdown for docId ${docId}...`);
-            const md = await this.docReader.getDocMarkdown(workspaceId, docId, false);
-            this.logger.log(`[Studio] getDocMarkdown finished successfully! Length: ${md?.markdown?.length || 0}`);
-            fullTextContext = md?.markdown || '';
+          this.logger.log(
+            `[Studio] Calling getDocMarkdown for docId ${docId}...`
+          );
+          const md = await this.docReader.getDocMarkdown(
+            workspaceId,
+            docId,
+            false
+          );
+          this.logger.log(
+            `[Studio] getDocMarkdown finished successfully! Length: ${md?.markdown?.length || 0}`
+          );
+          fullTextContext = md?.markdown || '';
         }
       } else {
         // Extract entire workspace!
         const snapshots = await this.prisma.snapshot.findMany({
           where: { workspaceId },
-          select: { id: true }
+          select: { id: true },
         });
-        
+
         for (const snap of snapshots) {
           try {
-            const md = await this.docReader.getDocMarkdown(workspaceId, snap.id, false);
+            const md = await this.docReader.getDocMarkdown(
+              workspaceId,
+              snap.id,
+              false
+            );
             if (md?.markdown) {
               fullTextContext += `\n\n--- Document: ${md.title} ---\n\n${md.markdown}`;
             }
           } catch (e: any) {
-            this.logger.warn(`Skipping invalid document ${snap.id} during workspace extraction: ${e.message}`);
+            this.logger.warn(
+              `Skipping invalid document ${snap.id} during workspace extraction: ${e.message}`
+            );
           }
         }
       }
 
       // Determine model based on environment config
-      const configuredModel = this.config.copilot?.scenarios?.scenarios?.studio || 'gemini-2.5-flash';
+      const configuredModel =
+        this.config.copilot?.scenarios?.scenarios?.studio || 'gemini-2.5-flash';
       let model = configuredModel;
       this.logger.log(`[Studio] Starting AI Job with primary model: ${model}`);
 
       let provider = await this.providerFactory.getProvider({
         outputType: ModelOutputType.Text,
-        modelId: model
+        modelId: model,
       });
 
       // Fallback logic if the requested model is not found
       if (!provider) {
         provider = await this.providerFactory.getProvider({
-          outputType: ModelOutputType.Text
+          outputType: ModelOutputType.Text,
         });
         if (provider && provider.models.length > 0) {
           model = provider.models[0].id;
@@ -156,7 +186,7 @@ export class CopilotStudioService {
         }
       } else if (provider && !provider.models.map(m => m.id).includes(model)) {
         const allModels = provider.models.map(m => m.id);
-        
+
         if (allModels.includes('mistral-nemo') || allModels.includes('qwen2')) {
           model = allModels.includes('qwen2') ? 'qwen2' : 'mistral-nemo';
         } else if (allModels.includes('gpt-4-turbo')) {
@@ -169,10 +199,13 @@ export class CopilotStudioService {
       // Run Map-Reduce if content is huge
       let finalSummary = '';
       if (fullTextContext.length > 100000) {
-          this.logger.log(`Content too large (${fullTextContext.length}), using Map-Reduce...`);
-          // We can borrow MapReduce chunking logic from iracService, but let's implement a simple chunker
-          // Or just use the model to summarize it
-          finalSummary = "[MAP-REDUCE] Le contexte était trop grand. L'IA a analysé le dossier complet en plusieurs étapes.\n\n";
+        this.logger.log(
+          `Content too large (${fullTextContext.length}), using Map-Reduce...`
+        );
+        // We can borrow MapReduce chunking logic from iracService, but let's implement a simple chunker
+        // Or just use the model to summarize it
+        finalSummary =
+          "[MAP-REDUCE] Le contexte était trop grand. L'IA a analysé le dossier complet en plusieurs étapes.\n\n";
       }
 
       // Action Mapping
@@ -183,56 +216,140 @@ export class CopilotStudioService {
       if (actionType === 'dossier_summary') mappedAction = 'global_synthesis';
       if (actionType === 'presentation') mappedAction = 'Create a presentation';
 
+      // MCP Integration
+      let mcpTools: any[] = [];
+      let mcpClient: Client | null = null;
+      let mcpTransport: StdioClientTransport | null = null;
+      const tenderActions = [
+        'ao_go_no_go',
+        'ao_requirements',
+        'ao_risks',
+        'ao_outline',
+        'ao_final_validation',
+        'appel_offres',
+      ];
+
+      if (tenderActions.includes(actionType)) {
+        this.logger.log(
+          `[Studio] Routing action ${actionType} to MCP Server...`
+        );
+        try {
+          const scriptPath = join(
+            process.cwd(),
+            'packages/backend/server/src/plugins/copilot/studio/mcp/tender.ts'
+          );
+          mcpTransport = new StdioClientTransport({
+            command: 'npx',
+            args: ['ts-node', scriptPath],
+          });
+          mcpClient = new Client(
+            { name: 'Lexior Studio', version: '1.0.0' },
+            { capabilities: {} }
+          );
+          await mcpClient.connect(mcpTransport);
+          const toolsRes = await mcpClient.listTools();
+          if (toolsRes && toolsRes.tools) {
+            mcpTools = toolsRes.tools.map(tool => ({
+              type: 'function',
+              name: tool.name,
+              description: tool.description,
+              parameters: tool.inputSchema,
+            }));
+            this.logger.log(
+              `[Studio] Retrieved ${mcpTools.length} tools from MCP Server.`
+            );
+          }
+        } catch (err) {
+          this.logger.error(
+            `[Studio] Failed to connect to MCP Server for ${actionType}`,
+            err
+          );
+        }
+      }
+
       const prompt = await this.promptService.get(mappedAction);
-      
+
       let messages: any[] = [];
       if (prompt) {
-        messages = prompt.finish({ content: fullTextContext.substring(0, 100000) });
+        messages = prompt.finish({
+          content: fullTextContext.substring(0, 100000),
+        });
       } else {
-        this.logger.warn(`Prompt not found for ${mappedAction}, using fallback.`);
+        this.logger.warn(
+          `Prompt not found for ${mappedAction}, using fallback.`
+        );
         messages = [
-          { role: 'system', content: `Vous êtes un expert juridique de LexiorNotebook basé sur LexioGPT. Action demandée: ${actionType}.\nImportant : Adoptez un ton humain, naturel et professionnel. Respectez strictement la typographie française pour les titres : seule la première lettre du premier mot prend une majuscule (ex: "Couches architecturales détaillées").\nContexte:\n${fullTextContext.substring(0, 100000)}` },
-          { role: 'user', content: 'Veuillez effectuer l\'analyse.' }
+          {
+            role: 'system',
+            content: `Vous êtes un expert juridique de LexiorNotebook basé sur LexioGPT. Action demandée: ${actionType}.\nImportant : Adoptez un ton humain, naturel et professionnel. Respectez strictement la typographie française pour les titres : seule la première lettre du premier mot prend une majuscule (ex: "Couches architecturales détaillées").\nContexte:\n${fullTextContext.substring(0, 100000)}`,
+          },
+          { role: 'user', content: "Veuillez effectuer l'analyse." },
         ];
       }
 
       if (provider) {
         try {
-          this.logger.log(`[Studio] Calling provider.streamText for model ${model} with action ${mappedAction}...`);
-          const stream = provider.streamText(
-            { modelId: model },
-            messages
+          this.logger.log(
+            `[Studio] Calling provider.streamText for model ${model} with action ${mappedAction}...`
           );
+
+          // Inject MCP tools if available
+          const streamConfig: any = { modelId: model };
+          if (mcpTools.length > 0) {
+            streamConfig.tools = mcpTools;
+
+            let toolInstructions = `Vous avez accès à des outils spécialisés (MCP). Utilisez-les impérativement pour extraire les données pertinentes.`;
+            if (actionType === 'ao_go_no_go')
+              toolInstructions = `Utilisez impérativement l'outil 'evaluate_go_no_go_criteria' pour analyser la conformité stricte et présenter un rapport clair Go/No-Go.`;
+            if (actionType === 'ao_requirements')
+              toolInstructions = `Utilisez impérativement l'outil 'generate_requirements_matrix' pour construire un tableau croisé détaillé des exigences.`;
+            if (actionType === 'ao_risks')
+              toolInstructions = `Utilisez impérativement l'outil 'extract_risk_and_penalties' pour alerter l'utilisateur sur les risques juridiques majeurs.`;
+            if (actionType === 'ao_outline')
+              toolInstructions = `Utilisez impérativement l'outil 'generate_proposal_outline' pour rédiger la table des matières complète de la réponse.`;
+            if (actionType === 'ao_final_validation')
+              toolInstructions = `Utilisez impérativement l'outil 'final_validation_checklist' pour générer une checklist de contrôle qualité avant soumission.`;
+
+            messages.push({
+              role: 'system',
+              content: toolInstructions,
+            });
+          }
+
+          const stream = provider.streamText(streamConfig, messages);
 
           let chunkCount = 0;
           let lastUpdate = Date.now();
           for await (const chunk of stream) {
-             finalSummary += chunk;
-             chunkCount++;
-             
-             // Update DB every 1.5 seconds so UI can see progress
-             if (Date.now() - lastUpdate > 1500) {
-                lastUpdate = Date.now();
-                await this.prisma.aiJobs.update({
-                  where: { id: jobId },
-                  data: {
-                    payload: {
-                      actionType,
-                      scope,
-                      summary: finalSummary,
-                      createdAt: Date.now(),
-                    },
+            finalSummary += chunk;
+            chunkCount++;
+
+            // Update DB every 1.5 seconds so UI can see progress
+            if (Date.now() - lastUpdate > 1500) {
+              lastUpdate = Date.now();
+              await this.prisma.aiJobs.update({
+                where: { id: jobId },
+                data: {
+                  payload: {
+                    actionType,
+                    scope,
+                    summary: finalSummary,
+                    createdAt: Date.now(),
                   },
-                });
-             }
+                },
+              });
+            }
           }
-          this.logger.log(`[Studio] provider.streamText finished successfully!`);
+          this.logger.log(
+            `[Studio] provider.streamText finished successfully!`
+          );
         } catch (err) {
           this.logger.error(`Error generating text from model ${model}`, err);
           finalSummary += `\nErreur lors de la génération avec le modèle ${model}.`;
         }
       } else {
-        finalSummary = 'Erreur : Aucun modèle IA disponible pour traiter cette requête.';
+        finalSummary =
+          'Erreur : Aucun modèle IA disponible pour traiter cette requête.';
       }
 
       await this.prisma.aiJobs.update({
@@ -249,6 +366,9 @@ export class CopilotStudioService {
         },
       });
 
+      if (mcpClient && mcpTransport) {
+        await mcpClient.close();
+      }
     } catch (e) {
       await this.prisma.aiJobs.update({
         where: { id: jobId },
@@ -273,12 +393,18 @@ export class CopilotStudioService {
 
     return {
       id: job.id,
-      status: job.status === AiJobStatus.finished ? AiJobStatus.claimed : job.status,
+      status:
+        job.status === AiJobStatus.finished ? AiJobStatus.claimed : job.status,
       payload: job.payload as unknown as StudioPayload,
     };
   }
 
-  async queryJob(userId: string, workspaceId: string, jobId?: string, blobId?: string): Promise<StudioJob | null> {
+  async queryJob(
+    userId: string,
+    workspaceId: string,
+    jobId?: string,
+    blobId?: string
+  ): Promise<StudioJob | null> {
     const job = await this.prisma.aiJobs.findFirst({
       where: {
         workspaceId,
@@ -316,7 +442,11 @@ export class CopilotStudioService {
     }));
   }
 
-  async deleteJob(userId: string, workspaceId: string, jobId: string): Promise<boolean> {
+  async deleteJob(
+    userId: string,
+    workspaceId: string,
+    jobId: string
+  ): Promise<boolean> {
     const res = await this.prisma.aiJobs.deleteMany({
       where: {
         id: jobId,
